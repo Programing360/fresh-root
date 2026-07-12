@@ -9,15 +9,17 @@ import Newsletter from "@/components/sections/Newsletter";
 import Services from "@/components/sections/Service";
 import Statistics from "@/components/sections/Statistics";
 import Testimonials from "@/components/sections/Testimonials";
+import { allProducts } from "@/lib/api/products";
 
-export default function Home() {
+export default async function Home() {
 
-  
+  const shopProducts = await allProducts()
+
 
   return (
     <div className="">
       <Hero></Hero>
-      <FeaturesGrid></FeaturesGrid>
+      <FeaturesGrid products={shopProducts}></FeaturesGrid>
       <Blogs />
       <Services />
       <Categories />
