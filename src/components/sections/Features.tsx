@@ -6,6 +6,7 @@ import { Star, Eye, Heart, ShoppingCart, ChevronLeft, ChevronRight, Loader2 } fr
 import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/types/product";
 import { addToCart, addToWishlist, removeFromWishlist } from "@/lib/api/cart";
+import Link from "next/link";
 
 
 const ITEMS_PER_PAGE = 4;
@@ -197,12 +198,14 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
                       </button>
 
                       <div className="flex items-center gap-1.5">
-                        <button
+                        <Link href={`/shop/${product._id}`}>
+                          <button
                           aria-label="Quick view item"
                           className="p-2 rounded-full bg-[#edf4e6] hover:bg-[#558223] text-[#558223] hover:text-white transition-colors duration-200"
                         >
                           <Eye size={13} />
                         </button>
+                        </Link> 
                         <button
                           onClick={(e) => handleToggleWishlist(e, product._id)}
                           disabled={loadingWishlistId === product._id}
