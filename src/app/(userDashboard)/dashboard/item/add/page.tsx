@@ -1,299 +1,490 @@
 "use client";
 
-import React, { useState } from "react";
-import * as z from "zod";
-import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, Loader2, Sparkles, Image as ImageIcon, CheckCircle } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
-  TextField,
-  Label,
-  Input,
-  TextArea,
-  FieldError,
-  Select,
-  ListBox,
+  Form,
   Button,
+  Input,
+  Label,
+  TextArea,
+  Select,
+  Description,
+  Header,
+  ListBox,
+  Separator,
 } from "@heroui/react";
+import gsap from "gsap";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { addProduct } from "@/lib/action/product-add";
+import { toast } from "react-toastify";
 
-const formValidationSchema = z.object({
-  title: z.string().min(3, "Title must contain at least 3 characters"),
-  shortDescription: z.string().min(5, "Provide a reliable summary text").max(100),
-  fullDescription: z.string().min(10, "Extended description is required"),
-  price: z.coerce.number().positive("Price must be a positive number"),
-  date: z.string().min(1, "Date is required"),
-  priority: z.enum(["low", "medium", "high"]),
-  category: z.string().min(1, "Category is required"),
-  location: z.string().min(2, "Location is required"),
-  rating: z.coerce.number().min(1).max(5),
-  imageUrl: z.string().url("Enter a valid image URL").optional().or(z.literal("")),
-});
+// --- Types ---
+interface FormData {
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  price: string;
+  discountPrice: string;
+  priority: "low" | "medium" | "high";
+  category: string;
+  location: string;
+  availability: "true" | "false";
+  imageUrl: string;
+}
 
-type FormInputFields = z.infer<typeof formValidationSchema>;
-type FormErrors = Partial<Record<keyof FormInputFields, string>>;
+const CATEGORY_OPTIONS = ["Burger", "Pizza", "Drinks", "Dessert", "Snacks"];
 
-const initialFormState: FormInputFields = {
-  title: "",
-  shortDescription: "",
-  fullDescription: "",
-  price: 0,
-  date: "",
-  priority: "medium",
-  category: "",
-  location: "",
-  rating: 1,
-  imageUrl: "",
-};
+export default function AddItemPage() {
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-export default function FormCreationPage() {
-  const [formData, setFormData] = useState<FormInputFields>(initialFormState);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isPending, setIsPending] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
+    shortDescription: "",
+    fullDescription: "",
+    price: "",
+    discountPrice: "",
+    priority: "medium",
+    category: "",
+    location: "",
+    availability: "true",
+    imageUrl: "",
+  });
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const updateField = <K extends keyof FormInputFields>(field: K, value: FormInputFields[K]) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // ওই field-এ আগের error থাকলে clear করে দাও, user typing শুরু করলেই
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+  useEffect(() => {
+    const isLoggedIn = true;
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+
+    AOS.init({ duration: 800, once: true });
+
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current.querySelector(".gsap-header"),
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+      );
+    }
+  }, [router]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePriorityChange = (keys: any) => {
+    const selectedValue = Array.from(keys)[0] as "low" | "medium" | "high";
+    setFormData((prev) => ({ ...prev, priority: selectedValue || "medium" }));
+  };
+
+  const handleCategoryChange = (keys: any) => {
+    const selectedValue = Array.from(keys)[0] as string;
+    console.log(selectedValue);
+    setFormData((prev) => ({ ...prev, category: selectedValue || "" }));
+  };
+
+  const handleAvailabilityChange = (keys: any) => {
+    const selectedValue = Array.from(keys)[0] as "true" | "false";
+    setFormData((prev) => ({ ...prev, availability: selectedValue || "true" }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const uploadData = new FormData();
+    uploadData.append("image", file);
+
+    try {
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+        { method: "POST", body: uploadData },
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData((prev) => ({ ...prev, imageUrl: result.data.url }));
+      } else {
+        alert("Image upload failed. Check API key configuration.");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccess(false);
+    setIsSubmitting(true);
 
-    const result = formValidationSchema.safeParse(formData);
+    // Backend-এর জন্য সঠিক type-এ convert করা
+    const payload = {
+      ...formData,
+      price: Number(formData.price),
+      discountPrice: formData.discountPrice
+        ? Number(formData.discountPrice)
+        : undefined,
+      availability: formData.availability === "true",
+      feature: false,
+      rating: 0,
+      reviewCount: 0,
+    };
 
-    if (!result.success) {
-      const fieldErrors: FormErrors = {};
-      result.error.issues.forEach((issue) => {
-        const key = issue.path[0] as keyof FormInputFields;
-        fieldErrors[key] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-
-    setErrors({});
-    setIsPending(true);
+    console.log(formData);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log("Submitted product data:", result.data);
-      setSuccess(true);
-      setFormData(initialFormState);
+      const result = await addProduct(payload);
+
+      if (result.insertedId) {
+        toast.success("Product Added Successfully");
+        // handleReset();
+      }
+
+      console.log("Submitting Item Data: ", payload, result);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to add product");
     } finally {
-      setIsPending(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
-    setFormData(initialFormState);
-    setErrors({});
-    setSuccess(false);
+    setFormData({
+      title: "",
+      shortDescription: "",
+      fullDescription: "",
+      price: "",
+      discountPrice: "",
+      priority: "medium",
+      category: "",
+      location: "",
+      availability: "true",
+      imageUrl: "",
+    });
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 px-3 py-1.5 rounded-full w-max">
-        <Sparkles size={12} /> Creation Pipeline Entry Guard Active
-      </div>
+    <div
+      ref={containerRef}
+      className="min-h-screen bg-background text-foreground flex items-center justify-center p-4 sm:p-6 md:p-8"
+    >
+      <div
+        data-aos="fade-up"
+        className="w-full max-w-2xl bg-content1 rounded-2xl shadow-xl border border-divider p-6 sm:p-8 space-y-6"
+      >
+        <div className="gsap-header text-center space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            Create New Item
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Fill in the metrics below to list your item in the database.
+          </p>
+        </div>
 
-      <AnimatePresence>
-        {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="p-4 mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-sm font-bold flex items-center gap-2"
-          >
-            <CheckCircle size={16} /> Product saved successfully!
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <Separator />
 
-      <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-950/40 shadow-sm">
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* Title */}
-            <div className="sm:col-span-2">
-              <TextField
-                name="title"
-                isInvalid={!!errors.title}
-                value={formData.title}
-                onChange={(e) => updateField("title", e.target.value)}
-              >
-                <Label>Item Title</Label>
-                <Input fullWidth placeholder="e.g. Classic Beef Burger" />
-                {errors.title && <FieldError>{errors.title}</FieldError>}
-              </TextField>
-            </div>
+        <Form onSubmit={handleSubmit} className="space-y-5">
+          {/* Title */}
+          <div className="flex flex-col gap-1 w-full">
+            <Label htmlFor="title" className="text-sm font-medium">
+              Title
+            </Label>
+            <Input
+              id="title"
+              name="title"
+              type="text"
+              isRequired
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="e.g., Classic Beef Burger"
+              variant="bordered"
+              className="w-full"
+            />
+          </div>
 
-            {/* Short Description */}
-            <div className="sm:col-span-2">
-              <TextField
-                name="shortDescription"
-                isInvalid={!!errors.shortDescription}
-                value={formData.shortDescription}
-                onChange={(e) => updateField("shortDescription", e.target.value)}
-              >
-                <Label>Short Summary</Label>
-                <Input fullWidth placeholder="A brief one-line summary" />
-                {errors.shortDescription && <FieldError>{errors.shortDescription}</FieldError>}
-              </TextField>
-            </div>
+          {/* Short Description */}
+          <div className="flex flex-col gap-1 w-full">
+            <Label htmlFor="shortDescription" className="text-sm font-medium">
+              Short Description
+            </Label>
+            <Input
+              id="shortDescription"
+              name="shortDescription"
+              type="text"
+              isRequired
+              value={formData.shortDescription}
+              onChange={handleInputChange}
+              placeholder="Brief summary sentence..."
+              variant="bordered"
+              className="w-full"
+            />
+          </div>
 
-            {/* Full Description */}
-            <div className="sm:col-span-2">
-              <TextField
-                name="fullDescription"
-                isInvalid={!!errors.fullDescription}
-                value={formData.fullDescription}
-                onChange={(e) => updateField("fullDescription", e.target.value)}
-              >
-                <Label>Full Description</Label>
-                <TextArea fullWidth rows={4} placeholder="Detailed description..." />
-                {errors.fullDescription && <FieldError>{errors.fullDescription}</FieldError>}
-              </TextField>
-            </div>
+          {/* Full Description */}
+          <div className="flex flex-col gap-2 w-full">
+            <Label htmlFor="fullDescription" className="text-sm font-medium">
+              Full Description
+            </Label>
+            <TextArea
+              id="fullDescription"
+              name="fullDescription"
+              isRequired
+              value={formData.fullDescription}
+              onChange={handleInputChange}
+              className="rounded-xl border border-border/70 bg-surface px-4 py-3 text-sm leading-6 shadow-sm"
+              placeholder="Provide a deep dive explanation of the item..."
+              rows={5}
+              style={{ resize: "vertical" }}
+            />
+          </div>
 
-            {/* Price */}
-            <div>
-              <TextField
+          {/* Price & Discount Price Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="price" className="text-sm font-medium">
+                Price (৳)
+              </Label>
+              <Input
+                id="price"
                 name="price"
                 type="number"
-                isInvalid={!!errors.price}
-                value={String(formData.price)}
-                onChange={(e) => updateField("price", Number(e.target.value))}
-              >
-                <Label>Price</Label>
-                <Input fullWidth type="number" step="0.01" placeholder="0.00" />
-                {errors.price && <FieldError>{errors.price}</FieldError>}
-              </TextField>
+                isRequired
+                value={formData.price}
+                onChange={handleInputChange}
+                placeholder="0.00"
+                variant="bordered"
+              />
             </div>
 
-            {/* Date */}
-            <div>
-              <TextField
-                name="date"
-                type="date"
-                isInvalid={!!errors.date}
-                value={formData.date}
-                onChange={(e) => updateField("date", e.target.value)}
-              >
-                <Label>Date</Label>
-                <Input fullWidth type="date" />
-                {errors.date && <FieldError>{errors.date}</FieldError>}
-              </TextField>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="discountPrice" className="text-sm font-medium">
+                Discount Price (৳)
+              </Label>
+              <Input
+                id="discountPrice"
+                name="discountPrice"
+                type="number"
+                value={formData.discountPrice}
+                onChange={handleInputChange}
+                placeholder="Optional"
+                variant="bordered"
+              />
             </div>
+          </div>
 
-            {/* Priority — HeroUI Select */}
-            <div>
-              <Label>Priority</Label>
+          {/* Category & Priority Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            {/* Category Select */}
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="category" className="text-sm font-medium">
+                Category
+              </Label>
               <Select
-                selectedKey={formData.priority}
-                onSelectionChange={(key) => updateField("priority", key as FormInputFields["priority"])}
+                id="category"
+                selectedKeys={formData.category ? [formData.category] : []}
+                onSelectionChange={handleCategoryChange}
+                aria-label="Select category"
               >
-                <Select.Trigger className="w-full mt-1.5">
-                  <Select.Value />
+                <Select.Trigger className="w-full border border-border/70 rounded-xl px-3 py-2 text-sm bg-background flex justify-between items-center">
+                  <Select.Value placeholder="Select category" />
                   <Select.Indicator />
                 </Select.Trigger>
-                <Select.Popover>
-                  <ListBox>
-                    <ListBox.Item id="low">Low</ListBox.Item>
-                    <ListBox.Item id="medium">Medium</ListBox.Item>
-                    <ListBox.Item id="high">High</ListBox.Item>
+                <Select.Popover className="bg-content1 border border-divider rounded-xl shadow-lg">
+                  <ListBox className="p-1">
+                    {CATEGORY_OPTIONS.map((cat, i) => (
+                      <ListBox.Item
+                        key={i}
+                        id={cat}
+                        className="px-3 py-2 text-sm rounded-lg hover:bg-default-100 cursor-pointer flex justify-between items-center"
+                      >
+                        <Label>{cat}</Label>
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
                   </ListBox>
                 </Select.Popover>
               </Select>
             </div>
 
-            {/* Category */}
-            <div>
-              <TextField
-                name="category"
-                isInvalid={!!errors.category}
-                value={formData.category}
-                onChange={(e) => updateField("category", e.target.value)}
+            {/* Priority Select */}
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="priority" className="text-sm font-medium">
+                Priority Level
+              </Label>
+              <Select
+                id="priority"
+                selectedKeys={[formData.priority]}
+                onSelectionChange={handlePriorityChange}
+                aria-label="Select priority level"
               >
-                <Label>Category</Label>
-                <Input fullWidth placeholder="e.g. Burger, Pizza" />
-                {errors.category && <FieldError>{errors.category}</FieldError>}
-              </TextField>
+                <Select.Trigger className="w-full border border-border/70 rounded-xl px-3 py-2 text-sm bg-background flex justify-between items-center">
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover className="bg-content1 border border-divider rounded-xl shadow-lg">
+                  <ListBox className="p-1">
+                    <Header className="px-2 py-1 text-xs font-semibold text-muted-foreground">
+                      Select Options
+                    </Header>
+                    <ListBox.Item
+                      key="low"
+                      id="low"
+                      className="px-3 py-2 text-sm rounded-lg hover:bg-default-100 cursor-pointer flex justify-between items-center"
+                    >
+                      <Label>Low Priority</Label>
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    <ListBox.Item
+                      key="medium"
+                      id="medium"
+                      className="px-3 py-2 text-sm rounded-lg hover:bg-default-100 cursor-pointer flex justify-between items-center"
+                    >
+                      <Label>Medium Priority</Label>
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    <ListBox.Item
+                      key="high"
+                      id="high"
+                      className="px-3 py-2 text-sm rounded-lg hover:bg-default-100 cursor-pointer flex justify-between items-center"
+                    >
+                      <Label>High Priority</Label>
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
+          </div>
 
-            {/* Location */}
-            <div>
-              <TextField
+          {/* Location & Availability Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="location" className="text-sm font-medium">
+                Location
+              </Label>
+              <Input
+                id="location"
                 name="location"
-                isInvalid={!!errors.location}
+                type="text"
+                isRequired
                 value={formData.location}
-                onChange={(e) => updateField("location", e.target.value)}
-              >
-                <Label>Location</Label>
-                <Input fullWidth placeholder="e.g. Dhanmondi, Dhaka" />
-                {errors.location && <FieldError>{errors.location}</FieldError>}
-              </TextField>
+                onChange={handleInputChange}
+                placeholder="e.g., Gulshan, Dhaka"
+                variant="bordered"
+              />
             </div>
 
-            {/* Rating */}
-            <div>
-              <TextField
-                name="rating"
-                type="number"
-                isInvalid={!!errors.rating}
-                value={String(formData.rating)}
-                onChange={(e) => updateField("rating", Number(e.target.value))}
+            {/* Availability Select */}
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="availability" className="text-sm font-medium">
+                Availability
+              </Label>
+              <Select
+                id="availability"
+                selectedKeys={[formData.availability]}
+                onSelectionChange={handleAvailabilityChange}
+                aria-label="Select availability"
               >
-                <Label>Rating (1-5)</Label>
-                <Input fullWidth type="number" min={1} max={5} step="0.1" />
-                {errors.rating && <FieldError>{errors.rating}</FieldError>}
-              </TextField>
-            </div>
-
-            {/* Image URL */}
-            <div className="sm:col-span-2">
-              <TextField
-                name="imageUrl"
-                isInvalid={!!errors.imageUrl}
-                value={formData.imageUrl}
-                onChange={(e) => updateField("imageUrl", e.target.value)}
-              >
-                <Label>Image URL</Label>
-                <Input fullWidth placeholder="https://images.unsplash.com/..." />
-                {errors.imageUrl && <FieldError>{errors.imageUrl}</FieldError>}
-              </TextField>
-            </div>
-
-            {/* Live Preview */}
-            <div className="sm:col-span-2 pt-2">
-              <span className="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
-                Live Preview
-              </span>
-              <div className="w-full aspect-video rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 flex items-center justify-center bg-neutral-50/50 dark:bg-neutral-900/10 overflow-hidden">
-                {formData.imageUrl && /^https?:\/\/.+/i.test(formData.imageUrl) ? (
-                  <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-neutral-400 text-xs font-medium flex flex-col items-center gap-2">
-                    <ImageIcon size={24} /> Enter a valid image URL to preview
-                  </div>
-                )}
-              </div>
+                <Select.Trigger className="w-full border border-border/70 rounded-xl px-3 py-2 text-sm bg-background flex justify-between items-center">
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover className="bg-content1 border border-divider rounded-xl shadow-lg">
+                  <ListBox className="p-1">
+                    <ListBox.Item
+                      key="true"
+                      id="true"
+                      className="px-3 py-2 text-sm rounded-lg hover:bg-default-100 cursor-pointer flex justify-between items-center"
+                    >
+                      <Label>Available</Label>
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    <ListBox.Item
+                      key="false"
+                      id="false"
+                      className="px-3 py-2 text-sm rounded-lg hover:bg-default-100 cursor-pointer flex justify-between items-center"
+                    >
+                      <Label>Unavailable</Label>
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="pt-4 border-t border-dashed border-neutral-100 dark:border-neutral-900 flex items-center justify-end gap-3">
-            <Button type="button" variant="secondary" onPress={handleReset}>
-              Reset
+          {/* Image Upload */}
+          <div className="flex flex-col gap-2 w-full">
+            <Label htmlFor="image-file" className="text-sm font-medium">
+              Item Image Asset
+            </Label>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <input
+                id="image-file"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-default-100 file:text-foreground hover:file:bg-default-200 cursor-pointer border border-dashed border-divider rounded-xl p-1"
+              />
+              {formData.imageUrl && (
+                <div className="text-xs text-success font-medium truncate max-w-xs sm:max-w-none self-center">
+                  ✓ Image Staged
+                </div>
+              )}
+            </div>
+            {isUploading && (
+              <p className="text-xs text-warning animate-pulse">
+                Uploading asset binaries directly to ImgBB storage...
+              </p>
+            )}
+
+            <Input
+              name="imageUrl"
+              type="url"
+              value={formData.imageUrl}
+              onChange={handleInputChange}
+              placeholder="Or explicitly paste external Image link URL here..."
+              variant="bordered"
+              size="sm"
+              className="mt-1"
+            />
+          </div>
+
+          <Separator className="my-2" />
+
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
+            <Button
+              type="reset"
+              variant="flat"
+              color="default"
+              onClick={handleReset}
+              className="w-full sm:w-auto font-medium"
+            >
+              Reset Inputs
             </Button>
-            <Button type="submit" isDisabled={isPending} className="flex items-center gap-2">
-              {isPending ? <Loader2 size={14} className="animate-spin" /> : "Save Entry"}
+            <Button
+              type="submit"
+              color="primary"
+              isLoading={isSubmitting || isUploading}
+              disabled={isUploading}
+              className="w-full sm:w-auto font-medium shadow-md shadow-primary/20"
+            >
+              {isSubmitting ? "Saving record..." : "Submit New Item"}
             </Button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );

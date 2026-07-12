@@ -98,11 +98,11 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
         </h2>
         
         <nav className="flex flex-wrap items-center gap-2 sm:gap-4">
-          {categories.map((category) => {
+          {categories.map((category, i) => {
             const isActive = activeCategory === category;
             return (
               <button
-                key={category}
+                key={i}
                 onClick={() => handleCategoryChange(category)}
                 className={`px-4 py-2 text-xs sm:text-sm font-bold tracking-wide rounded-full transition-all duration-200 outline-none ${
                   isActive
@@ -126,8 +126,8 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimatePresence mode="popLayout">
             {paginatedProducts.map((product) => {
-              const priceDisplay = product.discountPrice ?? product.price;
-              const showOldPrice = product.discountPrice != null;
+              const priceDisplay = product?.discountPrice ?? product?.price;
+              const showOldPrice = product?.discountPrice != null;
               const isWishlisted = wishlisted.has(product._id);
 
               return (
@@ -151,7 +151,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
                     
                     <span className="bg-white/90 dark:bg-neutral-900/90 shadow-sm border border-neutral-100 dark:border-neutral-800 rounded-full px-2 py-0.5 flex items-center gap-1 text-[11px] font-bold text-neutral-800 dark:text-neutral-200 pointer-events-auto">
                       <Star className="fill-amber-400 text-amber-400" size={12} />
-                      {product.rating.toFixed(2)}
+                      {product?.rating.toFixed(2)}
                     </span>
                   </div>
 
@@ -178,7 +178,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
                       </span>
                       {showOldPrice && (
                         <span className="text-xs font-medium text-neutral-400 line-through">
-                          ৳{product.price.toFixed(2)}
+                          ৳{product?.price.toFixed(2)}
                         </span>
                       )}
                     </div>
