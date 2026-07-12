@@ -4,183 +4,68 @@ import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { Search, LayoutGrid, List, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import ProductCard, { Product } from "@/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
 import SkeletonCard from "@/components/SkeletonCard";
+import { Product } from "@/types/product";
 
-// Premium Curated Seed Dataset
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: "Organic Juice",
-    price: 15.00,
-    priceDisplay: "$10.00 - $20.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=400&auto=format&fit=crop",
-    category: "Food Drinks",
-    accentColor: "group-hover:border-amber-500/60 border-amber-200/60 dark:border-amber-900/30",
-  },
-  {
-    id: 2,
-    name: "Fresh Orange",
-    price: 38.00,
-    priceDisplay: "$12.00 - $65.00",
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?q=80&w=400&auto=format&fit=crop",
-    category: "Food Drinks",
-    accentColor: "group-hover:border-orange-500/60 border-orange-200/60 dark:border-orange-900/30",
-  },
-  {
-    id: 3,
-    name: "Organic Cabbage",
-    price: 4.00,
-    priceDisplay: "$4.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1581053150531-df2be1f88a91?q=80&w=400&auto=format&fit=crop",
-    category: "Food",
-    accentColor: "group-hover:border-purple-500/60 border-purple-200/60 dark:border-purple-900/30",
-  },
-  {
-    id: 4,
-    name: "Premium Coffee Beans",
-    price: 24.00,
-    priceDisplay: "$24.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=400&auto=format&fit=crop",
-    category: "Coffee",
-    accentColor: "group-hover:border-amber-700/60 border-amber-300/40 dark:border-amber-900/20",
-  },
-  {
-    id: 5,
-    name: "Whole Wheat Bread",
-    price: 5.50,
-    priceDisplay: "$5.50",
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=400&auto=format&fit=crop",
-    category: "Bread & Bakery",
-    accentColor: "group-hover:border-yellow-600/60 border-yellow-200/60 dark:border-yellow-900/30",
-  },
-  {
-    id: 6,
-    name: "Organic Honey Jar",
-    price: 18.00,
-    priceDisplay: "$18.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=400&auto=format&fit=crop",
-    category: "Discount Weekly",
-    accentColor: "group-hover:border-orange-400/60 border-orange-200/50 dark:border-orange-900/30",
-  },
-  {
-    id: 7,
-    name: "Raw Almonds Pack",
-    price: 12.00,
-    priceDisplay: "$12.00",
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=400&auto=format&fit=crop",
-    category: "Dry Food",
-    accentColor: "group-hover:border-neutral-500/60 border-neutral-200/60 dark:border-neutral-800/40",
-  },
-  {
-    id: 8,
-    name: "Green Tea Matcha",
-    price: 22.00,
-    priceDisplay: "$22.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?q=80&w=400&auto=format&fit=crop",
-    category: "Coffee",
-    accentColor: "group-hover:border-emerald-500/60 border-emerald-200/60 dark:border-emerald-900/30",
-  },
-  {
-    id: 9,
-    name: "Fresh Red Apples",
-    price: 8.00,
-    priceDisplay: "$8.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=400&auto=format&fit=crop",
-    category: "Food",
-    accentColor: "group-hover:border-red-500/60 border-red-200/60 dark:border-red-900/30",
-  },
-  {
-    id: 10,
-    name: "Organic Oats packet",
-    price: 6.50,
-    priceDisplay: "$6.50",
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?q=80&w=400&auto=format&fit=crop",
-    category: "Dry Food",
-    accentColor: "group-hover:border-stone-400/60 border-stone-200/60 dark:border-stone-800/30",
-  },
-  {
-    id: 11,
-    name: "Croissant Pastry",
-    price: 3.50,
-    priceDisplay: "$3.50",
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=400&auto=format&fit=crop",
-    category: "Bread & Bakery",
-    accentColor: "group-hover:border-amber-400/60 border-amber-200/60 dark:border-amber-900/30",
-  },
-  {
-    id: 12,
-    name: "Fresh Avocados",
-    price: 14.00,
-    priceDisplay: "$14.00",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?q=80&w=400&auto=format&fit=crop",
-    category: "Discount Weekly",
-    accentColor: "group-hover:border-lime-500/60 border-lime-200/60 dark:border-lime-900/30",
-  },
-];
+interface ShopPageProps {
+  products: Product[];
+}
 
-export default function ShopPage() {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+export default function ShopPage({ products }: ShopPageProps) {
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
-  // Filtering & UX Controls States
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<string>("latest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
 
-  // Simulating clean loading state transitions for UI verification
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    PRODUCTS.forEach((p) => {
-      counts[p.category] = (counts[p.category] || 0) + 1;
-    });
-    return counts;
-  }, []);
+ const categoryCounts = useMemo(() => {
+  const counts: Record<string, number> = {};
+  products.forEach((p) => {
+    counts[p.category] = (counts[p.category] || 0) + 1;
+  });
+  return counts;
+}, [products]);
 
-  const filteredProducts = useMemo(() => {
-    let result = [...PRODUCTS];
+const filteredProducts = useMemo(() => {
+  let result = [...products];
 
-    if (selectedCategory) {
-      result = result.filter((p) => p.category === selectedCategory);
-    }
+  if (selectedCategory) {
+    result = result.filter((p) => p.category === selectedCategory);
+  }
 
-    if (searchQuery.trim() !== "") {
-      result = result.filter((p) =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  if (searchQuery.trim() !== "") {
+    result = result.filter((p) =>
+      p.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
 
-    if (sortBy === "low-to-high") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "high-to-low") {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === "rating") {
-      result.sort((a, b) => b.rating - a.rating);
-    } else {
-      result.sort((a, b) => b.id - a.id);
-    }
+  if (sortBy === "low-to-high") {
+    result.sort((a, b) => (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price));
+  } else if (sortBy === "high-to-low") {
+    result.sort((a, b) => (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price));
+  } else if (sortBy === "rating") {
+    result.sort((a, b) => b.rating - a.rating);
+  } else {
+    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
 
-    return result;
-  }, [searchQuery, selectedCategory, sortBy]);
+  return result;
+}, [products, searchQuery, selectedCategory, sortBy]);
+
+const allCategories = useMemo(() => {
+  return Array.from(new Set(products.map((p) => p.category)));
+}, [products]);
+
+console.log(allCategories);
 
   return (
     <div className="min-h-screen bg-[#fcfcfb] text-neutral-800 dark:bg-[#0c0e0c] dark:text-neutral-100">
@@ -205,13 +90,11 @@ export default function ShopPage() {
         </div>
       </div>
 
-      {/* Main Structural Wrapper */}
       <main className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-8">
         
-        {/* Responsive Toolbar Area */}
         <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-neutral-200/60 dark:border-neutral-800/60 pb-6">
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Showing <span className="font-semibold text-neutral-800 dark:text-neutral-200">{filteredProducts.length}</span> of {PRODUCTS.length} results
+            Showing <span className="font-semibold text-neutral-800 dark:text-neutral-200">{filteredProducts.length}</span> of {products.length} results
             {selectedCategory && (
               <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
                 {selectedCategory}
@@ -221,7 +104,6 @@ export default function ShopPage() {
           </p>
           
           <div className="flex flex-wrap items-center gap-3">
-            {/* View Grid/List Mode Toggle buttons */}
             <div className="flex items-center gap-1 rounded-xl border border-neutral-200 p-1 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
               <button 
                 onClick={() => setViewMode("grid")}
@@ -239,7 +121,6 @@ export default function ShopPage() {
               </button>
             </div>
 
-            {/* Sort Pipeline Selector Dropdown */}
             <div className="relative">
               <button 
                 onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
@@ -284,7 +165,6 @@ export default function ShopPage() {
               </AnimatePresence>
             </div>
 
-            {/* Input Live Filter Search Box */}
             <div className="relative flex items-center min-w-[220px]">
               <input
                 type="text"
@@ -298,10 +178,8 @@ export default function ShopPage() {
           </div>
         </div>
 
-        {/* Global Component Content Layout Area */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           
-          {/* Card Grid Renderer Pipeline */}
           <div className="lg:col-span-3">
             {isLoading ? (
               <div className={viewMode === "grid" 
@@ -329,11 +207,11 @@ export default function ShopPage() {
               }>
                 {filteredProducts.map((product) => (
                   <ProductCard
-                    key={product.id}
+                    key={product._id}
                     product={product}
                     viewMode={viewMode}
-                    isHovered={hoveredCard === product.id}
-                    onHoverStart={() => setHoveredCard(product.id)}
+                    isHovered={hoveredCard === product._id}
+                    onHoverStart={() => setHoveredCard(product._id)}
                     onHoverEnd={() => setHoveredCard(null)}
                   />
                 ))}
@@ -341,7 +219,6 @@ export default function ShopPage() {
             )}
           </div>
 
-          {/* Sidebar Navigation Layout Panel */}
           <aside className="lg:col-span-1">
             <div className="rounded-2xl border border-neutral-200/70 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900/30 sticky top-6">
               <h2 className="serif-font text-lg font-bold tracking-wide text-neutral-800 dark:text-neutral-100 pb-2 border-b-2 border-emerald-500 max-w-max mb-5">
@@ -349,14 +226,7 @@ export default function ShopPage() {
               </h2>
               
               <ul className="flex flex-col">
-                {[
-                  "Bread & Bakery",
-                  "Coffee",
-                  "Discount Weekly",
-                  "Dry Food",
-                  "Food",
-                  "Food Drinks"
-                ].map((categoryName) => {
+                {allCategories.map((categoryName) => {
                   const isSelected = selectedCategory === categoryName;
                   return (
                     <li

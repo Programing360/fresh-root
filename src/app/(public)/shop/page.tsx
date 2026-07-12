@@ -1,10 +1,16 @@
 import React from 'react';
 import ShopPage from './shop';
+import { allProducts } from '@/lib/api/products';
 
-const page = () => {
+
+const page = async() => {
+
+    const products = await allProducts()
+    console.log(products);
+
     return (
         <div>
-            <ShopPage></ShopPage>
+            <ShopPage products={products}></ShopPage>
         </div>
     );
 };
