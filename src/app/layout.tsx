@@ -31,10 +31,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <header>
-          <Navbar></Navbar>
+          {/* <Navbar></Navbar> */}
         </header>
         <main>{children}</main>
-        <Footer/>
+        {/* <Footer/> */}
       </body>
     </html>
   );
