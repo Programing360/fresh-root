@@ -65,7 +65,6 @@ const allCategories = useMemo(() => {
   return Array.from(new Set(products.map((p) => p.category)));
 }, [products]);
 
-console.log(allCategories);
 
   return (
     <div className="min-h-screen bg-[#fcfcfb] text-neutral-800 dark:bg-[#0c0e0c] dark:text-neutral-100">

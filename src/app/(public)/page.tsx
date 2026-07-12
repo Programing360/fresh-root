@@ -11,6 +11,9 @@ import Statistics from "@/components/sections/Statistics";
 import Testimonials from "@/components/sections/Testimonials";
 
 export default function Home() {
+
+  
+
   return (
     <div className="">
       <Hero></Hero>

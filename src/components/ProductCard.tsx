@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Star, Eye, Clock, UtensilsCrossed, Heart, Repeat, ShoppingCart } from "lucide-react";
 import ProductQuickViewModal from "./modal/ProductQuickViewModal";
 import type { Product } from "@/types/product";
+import Link from "next/link";
 
 interface ProductDetail {
   id: string;
@@ -148,13 +149,15 @@ export default function ProductCard({
             >
               <Heart size={14} className={isWishlisted ? "fill-white" : ""} />
             </button>
-            <button
-              onClick={openQuickViewModal}
+           <Link href={`/shop/${product._id}`}>
+               <button
+              
               aria-label="Quick view"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 text-neutral-600 shadow-sm backdrop-blur transition-colors hover:bg-emerald-600 hover:text-white dark:border-neutral-700 dark:bg-neutral-900/90 dark:text-neutral-300"
             >
               <Eye size={14} />
             </button>
+           </Link>
           </div>
         )}
 

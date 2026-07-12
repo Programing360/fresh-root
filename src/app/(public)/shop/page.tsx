@@ -6,7 +6,6 @@ import { allProducts } from '@/lib/api/products';
 const page = async() => {
 
     const products = await allProducts()
-    console.log(products);
 
     return (
         <div>

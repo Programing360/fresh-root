@@ -1,163 +1,210 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Leaf, ShieldCheck, Truck, Zap } from "lucide-react";
+import React, { useState } from "react";
+import Image from "next/image";
+import { Star, Eye, Heart, ShoppingCart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-interface FeatureItem {
+// 1. Types & Interfaces
+interface FeaturedProduct {
   id: number;
-  icon: React.ComponentType<{ className?: string }>;
   title: string;
-  description: string;
-  badge: string;
+  price: number;
+  oldPrice?: number;
+  rating: number;
+  image: string;
+  category: string;
+  discount?: string;
 }
 
-export default function FeaturesGrid(): React.JSX.Element {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const gridRef = useRef<HTMLDivElement | null>(null);
+// 2. Mock Data matching the exact layout image
+const MOCK_PRODUCTS: FeaturedProduct[] = [
+  {
+    id: 1,
+    title: "Organic Bananas",
+    price: 22.00,
+    rating: 5.00,
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=400&auto=format&fit=crop",
+    category: "Fresh Fruits",
+  },
+  {
+    id: 2,
+    title: "Organic Butter",
+    price: 10.00,
+    oldPrice: 15.00,
+    rating: 5.00,
+    image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?q=80&w=400&auto=format&fit=crop",
+    category: "Food Drinks",
+    discount: "33%",
+  },
+  {
+    id: 3,
+    title: "Herbal Tea",
+    price: 10.00,
+    oldPrice: 15.00,
+    rating: 5.00,
+    image: "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=400&auto=format&fit=crop",
+    category: "Food Drinks",
+    discount: "33%",
+  },
+  {
+    id: 4,
+    title: "Fresh Strawberry",
+    price: 22.00,
+    rating: 5.00,
+    image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?q=80&w=400&auto=format&fit=crop",
+    category: "Fresh Fruits",
+  },
+];
 
-  const features: FeatureItem[] = [
-    {
-      id: 1,
-      icon: Leaf,
-      title: "100% Organic Certified",
-      description: "Directly sourced from pristine local farms that prioritize sustainability and nutrient-rich soil health.",
-      badge: "Pure Nature",
-    },
-    {
-      id: 2,
-      icon: ShieldCheck,
-      title: "Premium Quality Control",
-      description: "Every item undergoes multi-tier freshness inspections before being hand-packed into eco-friendly parcels.",
-      badge: "Guaranteed",
-    },
-    {
-      id: 3,
-      icon: Truck,
-      title: "Zero-Emission Delivery",
-      description: "Fast, chilled logistics that preserve the crisp integrity of your items while maintaining a neutral carbon footprint.",
-      badge: "Eco-Express",
-    },
-    {
-      id: 4,
-      icon: Zap,
-      title: "Instant Farm-to-Table",
-      description: "Harvested at dawn, packaged with precision, and dispatched directly to your doorstep in less than 24 hours.",
-      badge: "Ultra Fresh",
-    },
-  ];
+const CATEGORIES = ["All", "Food Drinks", "Fresh Fruits", "Nature", "Vegetable"];
 
-  useEffect(() => {
-    if (!gridRef.current) return;
+export default function FeaturedProducts() {
+  const [activeCategory, setActiveCategory] = useState("All");
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        gridRef.current!.children,
-        { 
-          y: 40, 
-          opacity: 0 
-        },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          stagger: 0.12,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 88%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
+  // Filtering Logic
+  const filteredProducts = MOCK_PRODUCTS.filter(product => 
+    activeCategory === "All" ? true : product.category === activeCategory
+  );
 
   return (
-    <section
-      ref={containerRef}
-      className="w-full py-24 bg-[#f9f9f6] dark:bg-[#0e100e] text-[#1c1e1c] dark:text-neutral-100 transition-colors duration-500 overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+    <section className="w-full bg-white dark:bg-neutral-950 px-4 py-16 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      
+      {/* ==========================================
+          HEADER AND CATEGORY NAVIGATION FILTER ROW
+          ========================================== */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10 pb-4 border-b border-neutral-100 dark:border-neutral-900">
+        <h2 className="text-3xl font-extrabold tracking-tight text-neutral-950 dark:text-neutral-50 font-sans">
+          Featured Products
+        </h2>
         
-        {/* Section Header */}
-        <div className="max-w-3xl mb-20">
-          <motion.span
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 bg-emerald-700/10 dark:bg-emerald-400/10 px-3 py-1 rounded-full"
-          >
-            Why freshRoot
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl sm:text-[2.6rem] font-black tracking-tight mt-5 leading-[1.15] text-neutral-900 dark:text-neutral-50"
-          >
-            We set the standard for premium, <br className="hidden sm:inline" />
-            uncompromised organic grocery.
-          </motion.h2>
-        </div>
-
-        {/* Features Interactive Grid */}
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {features.map((feature) => {
-            const IconComponent = feature.icon;
+        {/* Dynamic Nav Tabs */}
+        <nav className="flex flex-wrap items-center gap-2 sm:gap-4">
+          {CATEGORIES.map((category) => {
+            const isActive = activeCategory === category;
             return (
-              <motion.div
-                key={feature.id}
-                whileHover={{ y: -8 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className="group relative flex flex-col justify-between p-8 rounded-[28px] border border-neutral-300/60 dark:border-neutral-800/60 bg-white/40 dark:bg-[#141614]/30 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_22px_45px_rgba(0,0,0,0.04)] dark:hover:shadow-[0_22px_45px_rgba(0,0,0,0.4)] hover:bg-white/90 dark:hover:bg-[#161916]/80 transition-all duration-500 cursor-pointer overflow-hidden"
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-4 py-2 text-xs sm:text-sm font-bold tracking-wide rounded-full transition-all duration-200 outline-none ${
+                  isActive
+                    ? "bg-[#558223] text-white shadow-sm"
+                    : "text-neutral-600 hover:text-[#558223] dark:text-neutral-400 dark:hover:text-white"
+                }`}
               >
-                {/* Decorative Premium Glow Back-layer behind the glass */}
-                <div className="absolute -right-12 -top-12 w-24 h-24 rounded-full bg-emerald-500/5 blur-xl group-hover:bg-emerald-500/10 transition-colors duration-500 pointer-events-none" />
-
-                <div>
-                  {/* Icon Wrapper with explicit hover states */}
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-700/10 dark:bg-emerald-400/10 flex items-center justify-center mb-8 group-hover:bg-emerald-600 dark:group-hover:bg-emerald-500 transition-all duration-500 ease-out shadow-sm">
-                    <IconComponent className="w-6 h-6 text-emerald-700 dark:text-emerald-400 group-hover:text-white dark:group-hover:text-[#0e100e] group-hover:scale-110 transition-all duration-500 ease-out" />
-                  </div>
-
-                  {/* Core Typography - Fixed High Contrast in Light Mode */}
-                  <h3 className="text-xl font-bold tracking-tight mb-3 text-neutral-900 dark:text-neutral-50 group-hover:text-emerald-800 dark:group-hover:text-emerald-400 transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-[14px] text-neutral-600 dark:text-neutral-400 font-medium leading-relaxed mb-6 group-hover:text-neutral-800 dark:group-hover:text-neutral-200 transition-colors duration-300">
-                    {feature.description}
-                  </p>
-                </div>
-
-                {/* Footer Tag Element */}
-                <div className="flex items-center justify-between mt-auto pt-2 border-t border-neutral-200/40 dark:border-neutral-800/40">
-                  <span className="text-[10px] font-bold tracking-widest uppercase text-neutral-400 dark:text-neutral-500 group-hover:text-neutral-500 dark:group-hover:text-neutral-400 transition-colors duration-300">
-                    {feature.badge}
-                  </span>
-                  <span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-emerald-600 dark:text-emerald-400 font-bold transition-all duration-500 text-base">
-                    →
-                  </span>
-                </div>
-              </motion.div>
+                {category}
+              </button>
             );
           })}
-        </div>
-
+        </nav>
       </div>
+
+      {/* ==========================================
+          DYNAMIC CARDS GRID MATRIX
+          ========================================== */}
+      <motion.div 
+        layout
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+      >
+        <AnimatePresence mode="popLayout">
+          {filteredProducts.map((product) => (
+            <motion.div
+              layout
+              key={product.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="group relative flex flex-col justify-between bg-[#f9f9f9] dark:bg-neutral-900/40 rounded-xl p-5 border border-transparent hover:border-neutral-200/60 dark:hover:border-neutral-800 transition-all shadow-sm hover:shadow-md"
+            >
+              
+              {/* Badges Layout Layer (Discount & Rating) */}
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
+                {product.discount ? (
+                  <span className="bg-[#78b32e] text-white text-xs font-bold px-2 py-0.5 rounded pointer-events-auto">
+                    {product.discount}
+                  </span>
+                ) : (
+                  <div />
+                )}
+                
+                <span className="bg-white/90 dark:bg-neutral-900/90 shadow-sm border border-neutral-100 dark:border-neutral-800 rounded-full px-2 py-0.5 flex items-center gap-1 text-[11px] font-bold text-neutral-800 dark:text-neutral-200 pointer-events-auto">
+                  <Star className="fill-amber-400 text-amber-400" size={12} />
+                  {product.rating.toFixed(2)}
+                </span>
+              </div>
+
+              {/* Product Visual Container Image */}
+              <div className="relative aspect-square w-full flex items-center justify-center p-4 mt-4 mb-6">
+                <div className="relative w-full h-full max-h-[140px] aspect-square transition-transform duration-300 group-hover:scale-105">
+                  <Image
+                    src={product.image}
+                    alt={product.title}
+                    fill
+                    className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal rounded-lg"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Info & Footer Elements Package */}
+              <div>
+                <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 line-clamp-1 mb-1">
+                  {product.title}
+                </h3>
+
+                {/* Pricing Structure Display */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-sm font-bold text-[#558223]">
+                    ${product.price.toFixed(2)}
+                  </span>
+                  {product.oldPrice && (
+                    <span className="text-xs font-medium text-neutral-400 line-through">
+                      ${product.oldPrice.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Actions Panel Row */}
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  {/* Add To Cart Simple Button */}
+                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#edf4e6] hover:bg-[#558223] text-[11px] font-bold tracking-wide text-[#558223] hover:text-white transition-colors duration-200">
+                    <ShoppingCart size={12} />
+                    Add to cart
+                  </button>
+
+                  {/* Micro Quick View and Fav Controls */}
+                  <div className="flex items-center gap-1.5">
+                    <button 
+                      aria-label="Quick view item" 
+                      className="p-2 rounded-full bg-[#edf4e6] hover:bg-[#558223] text-[#558223] hover:text-white transition-colors duration-200"
+                    >
+                      <Eye size={13} />
+                    </button>
+                    <button 
+                      aria-label="Add item to wishlist" 
+                      className="p-2 rounded-full bg-[#edf4e6] hover:bg-[#558223] text-[#558223] hover:text-white transition-colors duration-200"
+                    >
+                      <Heart size={13} />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* ==========================================
+          BOTTOM CAROUSEL SLIDER DOT INDICATORS
+          ========================================== */}
+      <div className="flex items-center justify-center gap-2 mt-12">
+        <span className="w-6 h-1 rounded-full bg-[#558223] transition-all" />
+        <span className="w-5 h-1 rounded-full bg-neutral-200 dark:bg-neutral-800 transition-all" />
+        <span className="w-5 h-1 rounded-full bg-neutral-200 dark:bg-neutral-800 transition-all" />
+      </div>
+
     </section>
   );
 }
