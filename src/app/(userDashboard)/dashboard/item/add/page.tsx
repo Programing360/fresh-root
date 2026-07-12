@@ -19,6 +19,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { addProduct } from "@/lib/action/product-add";
 import { toast } from "react-toastify";
+import { useClientSession } from "@/lib/core/session-client";
 
 // --- Types ---
 interface FormData {
@@ -32,6 +33,7 @@ interface FormData {
   location: string;
   availability: "true" | "false";
   imageUrl: string;
+  userId:string;
 }
 
 const CATEGORY_OPTIONS = ["Burger", "Pizza", "Drinks", "Dessert", "Snacks"];
@@ -40,6 +42,8 @@ export default function AddItemPage() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const {user} = useClientSession()
+    console.log(user);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     shortDescription: "",
@@ -51,6 +55,8 @@ export default function AddItemPage() {
     location: "",
     availability: "true",
     imageUrl: "",
+    userId:""
+
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -139,6 +145,7 @@ export default function AddItemPage() {
       feature: false,
       rating: 0,
       reviewCount: 0,
+      userId: user?.id
     };
 
     console.log(formData);
@@ -172,6 +179,7 @@ export default function AddItemPage() {
       location: "",
       availability: "true",
       imageUrl: "",
+      userId:""
     });
   };
 

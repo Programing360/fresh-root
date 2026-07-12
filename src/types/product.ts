@@ -17,21 +17,17 @@ export interface Product {
   shortDescription: string;
   description: string;
   category: string;
-  cuisine: string;
   price: number;
   discountPrice?: number;
-  date: string;
+  createAt: string;
   rating: number;
   reviewCount: number;
   location: string;
-  deliveryTime: string;
-  preparationTime: string;
   availability: boolean;
   featured: boolean;
   image: string;
   images: string[];
-  ingredients: string[];
-  nutrition: Nutrition;
   reviews: Review[];
   relatedItems: string[];
+  userId: string
 }

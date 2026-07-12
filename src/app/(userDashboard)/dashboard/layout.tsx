@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { SessionUser, UserRole } from "@/types/dashboard";
 import { useClientSession } from "@/lib/core/session-client";
+import Image from "next/image";
 
 // Simulated Dynamic Hook Mock Authentication State
 const MOCK_SESSION: SessionUser = {
@@ -276,7 +277,7 @@ export default function DashboardLayout({
             <div className="hidden sm:block text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
               Workspace Scope:{" "}
               <span className="text-neutral-700 dark:text-neutral-300 font-bold">
-                {MOCK_SESSION.role} account
+                {user?.role} account
               </span>
             </div>
 
@@ -291,9 +292,11 @@ export default function DashboardLayout({
               </button>
               <div className="h-8 w-px bg-neutral-200 dark:bg-neutral-800" />
               <div className="flex items-center gap-2.5">
-                <img
+                <Image
                   src={MOCK_SESSION.avatarUrl}
                   alt="Session Avatar Profile graphic"
+                  width={30}
+                  height={30}
                   className="h-8 w-8 rounded-full border border-neutral-200 dark:border-neutral-800 object-cover"
                 />
                 <span className="hidden md:inline text-xs font-bold text-neutral-700 dark:text-neutral-300">
