@@ -30,6 +30,7 @@ export default function ItemManagementTable({ manageProducts }: ItemManagementTa
   // --- DELETE ---
   const confirmDestructiveRemoval = async (targetId: string) => {
     setIsDeleting(true);
+    
     try {
       await deleteProduct(targetId);
       setCatalog((prev) => prev.filter((item) => item._id !== targetId));
@@ -215,14 +216,14 @@ export default function ItemManagementTable({ manageProducts }: ItemManagementTa
                 <button
                   onClick={() => setActiveDeletionTarget(null)}
                   disabled={isDeleting}
-                  className="px-4 py-2 rounded-xl border border-neutral-200 dark:border-neutral-800 text-xs font-bold uppercase tracking-wider text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl cursor-pointer border border-neutral-200 dark:border-neutral-800 text-xs font-bold uppercase tracking-wider text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => confirmDestructiveRemoval(activeDeletionTarget)}
                   disabled={isDeleting}
-                  className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-xs font-bold uppercase tracking-wider text-white transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl cursor-pointer bg-red-500 hover:bg-red-600 text-xs font-bold uppercase tracking-wider text-white transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
                 >
                   {isDeleting && <Loader2 size={12} className="animate-spin" />}
                   Confirm Delete

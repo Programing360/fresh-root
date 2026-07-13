@@ -1,5 +1,10 @@
 import { Product } from "@/types/product";
-import { protectedFetch } from "../core/server";
+import {
+  authHeaders,
+  protectedFetch,
+  serverDelete,
+  serverUpdate,
+} from "../core/server";
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -17,33 +22,14 @@ export const productsDetails = async (id: string): Promise<Product> => {
   return res.json();
 };
 
-
 export const updateProduct = async (id: string, data: Partial<Product>) => {
-  const res = await fetch(`${baseURL}/product/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to update product: ${res.status}`);
-  }
-
-  return res.json();
+  const res = await serverUpdate(`api/product-update/${id}`, data);
+  return res;
 };
 
 export const deleteProduct = async (id: string) => {
-  const res = await fetch(`${baseURL}/product/${id}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to delete product: ${res.status}`);
-  }
-
-  return res.json();
+  const res = await serverDelete(`api/delete/${id}`);
+  return res;
 };
 
 export const updateAvailability = async (id: string, availability: boolean) => {
