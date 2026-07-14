@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
-import { Sparkles, ArrowRight } from "lucide-react";
+import {  ArrowRight } from "lucide-react";
 import bannerImage from '../../../public/assets/foodImage.png'
 
 export default function FreshRootHero(): React.JSX.Element {
@@ -105,12 +105,12 @@ export default function FreshRootHero(): React.JSX.Element {
             {/* Highly Interactive Glow Action CTA Button */}
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <Button
-                radius="full"
-                endContent={<ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
-                className="mt-8 bg-[#ffdf1b] hover:bg-[#ffe53b] text-[#03301c] font-black px-8 py-6 shadow-[0_10px_30px_rgba(255,223,27,0.25)] group transition-all duration-300"
+                fullWidth
+                className="relative mt-8 bg-[#ffdf1b] hover:bg-[#ffe53b] text-[#03301c] font-black px-8 py-6 shadow-[0_10px_30px_rgba(255,223,27,0.25)] group transition-all duration-300"
               >
                 ORDER NOW
               </Button>
+              {/* <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform md:absolute md:top-12 md:right-3" /> */}
             </motion.div>
           </div>
 

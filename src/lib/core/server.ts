@@ -23,6 +23,20 @@ export const protectedFetch = async (apiUrl: string): Promise<Response> => {
   return res;
 };
 
+export const serverAction = async (apiUrl: string, data:Partial<Product>) => {
+
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/${apiUrl}`, {
+    method: "POST",
+    headers: {
+      "content-Type": "application/json",
+      ...(await authHeaders()),
+    },
+    body: JSON.stringify(data),
+  });
+
+  return handleProtectedStatus(res);
+};
 export const serverUpdate = async (apiUrl: string, data:Partial<Product>) => {
 
 

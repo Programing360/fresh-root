@@ -5,8 +5,8 @@ export interface SessionUser {
   name: string;
   email: string;
   role: UserRole;
-  avatarUrl: string;
-  joinDate: string;
+  image: string;
+  createAt: string;
 }
 
 export interface MetricCardData {

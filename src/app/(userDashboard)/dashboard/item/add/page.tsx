@@ -9,10 +9,11 @@ import {
   Label,
   TextArea,
   Select,
-  Description,
   Header,
   ListBox,
   Separator,
+  Selection,
+  Key,
 } from "@heroui/react";
 import gsap from "gsap";
 import AOS from "aos";
@@ -33,7 +34,18 @@ interface FormData {
   location: string;
   availability: "true" | "false";
   imageUrl: string;
-  userId:string;
+  userId: string;
+}
+
+interface ImageUrlInputProps {
+  name: "imageUrl";
+  type: "url";
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
+  variant: "bordered";
+  size: "sm";
+  className: string;
 }
 
 const CATEGORY_OPTIONS = ["Burger", "Pizza", "Drinks", "Dessert", "Snacks"];
@@ -42,8 +54,8 @@ export default function AddItemPage() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {user} = useClientSession()
-    console.log(user);
+  const { user } = useClientSession();
+  console.log(user);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     shortDescription: "",
@@ -55,8 +67,7 @@ export default function AddItemPage() {
     location: "",
     availability: "true",
     imageUrl: "",
-    userId:""
-
+    userId: "",
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,20 +97,29 @@ export default function AddItemPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePriorityChange = (keys: any) => {
-    const selectedValue = Array.from(keys)[0] as "low" | "medium" | "high";
-    setFormData((prev) => ({ ...prev, priority: selectedValue || "medium" }));
+  const handlePriorityChange = (value: Key | null) => {
+    const selectedValue = value as "low" | "medium" | "high";
+
+    setFormData((prev) => ({
+      ...prev,
+      priority: selectedValue || "medium",
+    }));
   };
 
-  const handleCategoryChange = (keys: any) => {
-    const selectedValue = Array.from(keys)[0] as string;
-    console.log(selectedValue);
-    setFormData((prev) => ({ ...prev, category: selectedValue || "" }));
+  const handleCategoryChange = (value: Key | null) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: value?.toString() || "",
+    }));
   };
 
-  const handleAvailabilityChange = (keys: any) => {
-    const selectedValue = Array.from(keys)[0] as "true" | "false";
-    setFormData((prev) => ({ ...prev, availability: selectedValue || "true" }));
+  const handleAvailabilityChange = (value: Key | null) => {
+    const selectedValue = value?.toString() as "true" | "false";
+
+    setFormData((prev) => ({
+      ...prev,
+      availability: selectedValue || "true",
+    }));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +165,7 @@ export default function AddItemPage() {
       feature: false,
       rating: 0,
       reviewCount: 0,
-      userId: user?.id
+      userId: user?.id,
     };
 
     console.log(formData);
@@ -179,7 +199,7 @@ export default function AddItemPage() {
       location: "",
       availability: "true",
       imageUrl: "",
-      userId:""
+      userId: "",
     });
   };
 
@@ -213,11 +233,11 @@ export default function AddItemPage() {
               id="title"
               name="title"
               type="text"
-              isRequired
+              required
               value={formData.title}
               onChange={handleInputChange}
               placeholder="e.g., Classic Beef Burger"
-              variant="bordered"
+              variant="primary"
               className="w-full"
             />
           </div>
@@ -231,11 +251,11 @@ export default function AddItemPage() {
               id="shortDescription"
               name="shortDescription"
               type="text"
-              isRequired
+              required
               value={formData.shortDescription}
               onChange={handleInputChange}
               placeholder="Brief summary sentence..."
-              variant="bordered"
+              variant="primary"
               className="w-full"
             />
           </div>
@@ -248,7 +268,7 @@ export default function AddItemPage() {
             <TextArea
               id="fullDescription"
               name="fullDescription"
-              isRequired
+              required
               value={formData.fullDescription}
               onChange={handleInputChange}
               className="rounded-xl border border-border/70 bg-surface px-4 py-3 text-sm leading-6 shadow-sm"
@@ -268,11 +288,11 @@ export default function AddItemPage() {
                 id="price"
                 name="price"
                 type="number"
-                isRequired
+                required
                 value={formData.price}
                 onChange={handleInputChange}
                 placeholder="0.00"
-                variant="bordered"
+                variant="primary"
               />
             </div>
 
@@ -287,7 +307,7 @@ export default function AddItemPage() {
                 value={formData.discountPrice}
                 onChange={handleInputChange}
                 placeholder="Optional"
-                variant="bordered"
+                variant="primary"
               />
             </div>
           </div>
@@ -301,12 +321,12 @@ export default function AddItemPage() {
               </Label>
               <Select
                 id="category"
-                selectedKeys={formData.category ? [formData.category] : []}
+                selectedKey={formData.category}
                 onSelectionChange={handleCategoryChange}
                 aria-label="Select category"
               >
                 <Select.Trigger className="w-full border border-border/70 rounded-xl px-3 py-2 text-sm bg-background flex justify-between items-center">
-                  <Select.Value placeholder="Select category" />
+                  <Select.Value />
                   <Select.Indicator />
                 </Select.Trigger>
                 <Select.Popover className="bg-content1 border border-divider rounded-xl shadow-lg">
@@ -333,7 +353,7 @@ export default function AddItemPage() {
               </Label>
               <Select
                 id="priority"
-                selectedKeys={[formData.priority]}
+                selectedKey={formData.priority}
                 onSelectionChange={handlePriorityChange}
                 aria-label="Select priority level"
               >
@@ -386,11 +406,11 @@ export default function AddItemPage() {
                 id="location"
                 name="location"
                 type="text"
-                isRequired
+                required
                 value={formData.location}
                 onChange={handleInputChange}
                 placeholder="e.g., Gulshan, Dhaka"
-                variant="bordered"
+                variant="primary"
               />
             </div>
 
@@ -401,7 +421,7 @@ export default function AddItemPage() {
               </Label>
               <Select
                 id="availability"
-                selectedKeys={[formData.availability]}
+                selectedKey={formData.availability}
                 onSelectionChange={handleAvailabilityChange}
                 aria-label="Select availability"
               >
@@ -464,8 +484,8 @@ export default function AddItemPage() {
               value={formData.imageUrl}
               onChange={handleInputChange}
               placeholder="Or explicitly paste external Image link URL here..."
-              variant="bordered"
-              size="sm"
+              variant="primary"
+              // size="sm"
               className="mt-1"
             />
           </div>
@@ -475,8 +495,7 @@ export default function AddItemPage() {
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
             <Button
               type="reset"
-              variant="flat"
-              color="default"
+              variant="secondary"
               onClick={handleReset}
               className="w-full sm:w-auto font-medium"
             >
@@ -484,9 +503,9 @@ export default function AddItemPage() {
             </Button>
             <Button
               type="submit"
-              color="primary"
-              isLoading={isSubmitting || isUploading}
-              disabled={isUploading}
+              variant="primary"
+              isPending={isSubmitting || isUploading}
+              isDisabled={isUploading}
               className="w-full sm:w-auto font-medium shadow-md shadow-primary/20"
             >
               {isSubmitting ? "Saving record..." : "Submit New Item"}

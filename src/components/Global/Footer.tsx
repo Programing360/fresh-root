@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, ArrowUp, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, ArrowUp, Sparkles } from "lucide-react";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 if (typeof window !== "undefined") {

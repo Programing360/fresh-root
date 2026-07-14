@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { 
-  ShoppingBag, 
+
   Package, 
   Truck, 
   CheckCircle2, 
@@ -39,7 +39,7 @@ export default function OrderPage() {
   });
 
   // Animation Variant Blueprints
-  const cardVariants = {
+  const cardVariants:Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
   };

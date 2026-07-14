@@ -55,7 +55,7 @@ const filteredProducts = useMemo(() => {
   } else if (sortBy === "rating") {
     result.sort((a, b) => b.rating - a.rating);
   } else {
-    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    result.sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
   }
 
   return result;

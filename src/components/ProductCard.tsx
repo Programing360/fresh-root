@@ -2,9 +2,15 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { Star, Eye, Clock, UtensilsCrossed, Heart, Repeat, ShoppingCart } from "lucide-react";
-import ProductQuickViewModal from "./modal/ProductQuickViewModal";
+import { motion } from "framer-motion";
+import {
+  Star,
+  Eye,
+
+  Heart,
+  Repeat,
+  ShoppingCart,
+} from "lucide-react";
 import type { Product } from "@/types/product";
 import Link from "next/link";
 
@@ -15,11 +21,9 @@ interface ProductDetail {
   rating: number;
   reviewCount: number;
   description: string;
-  sku: string;
+
   category: string;
-  tags: string[];
   images: string[];
-  specifications: { key: string; value: string }[];
 }
 
 interface ProductCardProps {
@@ -31,9 +35,12 @@ interface ProductCardProps {
 }
 
 const CATEGORY_ACCENTS: Record<string, string> = {
-  Burger: "group-hover:border-amber-500/60 border-amber-200/60 dark:border-amber-900/30",
-  Pizza: "group-hover:border-red-500/60 border-red-200/60 dark:border-red-900/30",
-  Drinks: "group-hover:border-emerald-500/60 border-emerald-200/60 dark:border-emerald-900/30",
+  Burger:
+    "group-hover:border-amber-500/60 border-amber-200/60 dark:border-amber-900/30",
+  Pizza:
+    "group-hover:border-red-500/60 border-red-200/60 dark:border-red-900/30",
+  Drinks:
+    "group-hover:border-emerald-500/60 border-emerald-200/60 dark:border-emerald-900/30",
 };
 const DEFAULT_ACCENT =
   "group-hover:border-neutral-500/60 border-neutral-200/60 dark:border-neutral-800/40";
@@ -57,7 +64,9 @@ export default function ProductCard({
 
   const [modalOpen, setModalOpen] = useState(false);
   const [loadingTrigger, setLoadingTrigger] = useState(false);
-  const [activeProduct, setActiveProduct] = useState<ProductDetail | null>(null);
+  const [activeProduct, setActiveProduct] = useState<ProductDetail | null>(
+    null,
+  );
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const openQuickViewModal = (e: React.MouseEvent) => {
@@ -74,14 +83,8 @@ export default function ProductCard({
       rating: product.rating,
       reviewCount: product.reviewCount,
       description,
-      sku: `00${product._id.slice(-4)}-h9`,
       category: product.category,
-      tags: [product.category.toLowerCase().replace(" & ", "-"), product.cuisine.toLowerCase()],
       images: product.images?.length ? product.images : [product.image],
-      specifications: [
-        { key: "Cuisine", value: product.cuisine },
-        { key: "Delivery Time", value: product.deliveryTime },
-      ],
     };
 
     setActiveProduct(detailedData);
@@ -149,15 +152,14 @@ export default function ProductCard({
             >
               <Heart size={14} className={isWishlisted ? "fill-white" : ""} />
             </button>
-           <Link href={`/shop/${product._id}`}>
-               <button
-              
-              aria-label="Quick view"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 text-neutral-600 shadow-sm backdrop-blur transition-colors hover:bg-emerald-600 hover:text-white dark:border-neutral-700 dark:bg-neutral-900/90 dark:text-neutral-300"
-            >
-              <Eye size={14} />
-            </button>
-           </Link>
+            <Link href={`/shop/${product._id}`}>
+              <button
+                aria-label="Quick view"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white/90 text-neutral-600 shadow-sm backdrop-blur transition-colors hover:bg-emerald-600 hover:text-white dark:border-neutral-700 dark:bg-neutral-900/90 dark:text-neutral-300"
+              >
+                <Eye size={14} />
+              </button>
+            </Link>
           </div>
         )}
 
@@ -201,7 +203,9 @@ export default function ProductCard({
                 {priceDisplay}
               </p>
               {product.discountPrice && (
-                <p className="text-xs text-neutral-400 line-through">৳{product.price}</p>
+                <p className="text-xs text-neutral-400 line-through">
+                  ৳{product.price}
+                </p>
               )}
             </div>
 
@@ -209,19 +213,19 @@ export default function ProductCard({
               {description}
             </p>
 
-            <div
+            {/* <div
               className={`mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-400 dark:text-neutral-500 ${
                 viewMode === "grid" ? "justify-center" : "justify-start"
               }`}
             >
               <span className="flex items-center gap-1">
-                <UtensilsCrossed size={11} /> {product.cuisine}
+      
               </span>
               <span className="hidden sm:inline">•</span>
               <span className="flex items-center gap-1">
-                <Clock size={11} /> {product.deliveryTime}
+      
               </span>
-            </div>
+            </div> */}
 
             <div
               className={`mt-2.5 flex items-center gap-1 ${viewMode === "grid" ? "justify-center" : "justify-start"}`}
@@ -239,7 +243,9 @@ export default function ProductCard({
                   />
                 ))}
               </div>
-              <span className="text-[10px] text-neutral-400">({product.reviewCount})</span>
+              <span className="text-[10px] text-neutral-400">
+                ({product.reviewCount})
+              </span>
             </div>
           </div>
 
@@ -277,7 +283,7 @@ export default function ProductCard({
         </div>
       </motion.div>
 
-      <ProductQuickViewModal
+      {/* <ProductQuickViewModal
         isOpen={modalOpen}
         isLoading={loadingTrigger}
         product={activeProduct}
@@ -286,9 +292,11 @@ export default function ProductCard({
           setTimeout(() => setActiveProduct(null), 200);
         }}
         onAddToCart={(productId, quantity) => {
-          console.log(`Dispatched allocation stream: ID: ${productId} | Quantity: ${quantity}`);
+          console.log(
+            `Dispatched allocation stream: ID: ${productId} | Quantity: ${quantity}`,
+          );
         }}
-      />
+      /> */}
     </>
   );
 }

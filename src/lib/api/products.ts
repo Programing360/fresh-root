@@ -1,6 +1,5 @@
 import { Product } from "@/types/product";
 import {
-  authHeaders,
   protectedFetch,
   serverDelete,
   serverUpdate,

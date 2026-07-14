@@ -1,6 +1,7 @@
 import ItemManagementTable from '@/components/dashboard/ItemManagementTable';
 import { allProducts } from '@/lib/api/products';
 import { getUserSession } from '@/lib/core/session';
+import { Suspense } from 'react';
 
 const page = async() => {
     const user = await getUserSession()
@@ -14,9 +15,10 @@ const page = async() => {
     // console.log(roleBaseData);
 
     return (
-        <div>
+        <Suspense fallback={<div>Loading.....</div>}>
             <ItemManagementTable manageProducts={roleBaseData}/>
-        </div>
+        </Suspense>
+       
     );
 };
 

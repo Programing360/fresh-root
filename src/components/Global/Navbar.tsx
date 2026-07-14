@@ -165,8 +165,8 @@ export default function Navbar(): React.JSX.Element {
           {/* Theme Switcher */}
           <Button
             isIconOnly
-            variant="light"
-            radius="xl"
+            variant="primary"
+            // size="xl"
             onClick={toggleTheme}
             className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
             aria-label="Toggle System Theme"
@@ -258,7 +258,7 @@ export default function Navbar(): React.JSX.Element {
               <div className="flex items-center gap-3">
                 <Link href="/auth/login">
                   <Button
-                    variant="light"
+                    variant="primary"
                     className="text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-200/40 dark:hover:bg-neutral-800/40 px-4"
                   >
                     Sign In
@@ -338,16 +338,18 @@ export default function Navbar(): React.JSX.Element {
                 {isLoggedIn ? (
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3 bg-neutral-200/30 dark:bg-neutral-800/30 p-2 rounded-xl border border-neutral-200/40 dark:border-neutral-800/40">
-                      <Avatar
-                        size="sm"
+                      <Avatar>
+                        <Avatar.Image
+                        sizes="sm"
                         src={
                           user?.image ||
                           "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
                         }
-                        name={user?.name || "User"}
-                        isBordered
+                        className={user?.name || "User"}
+                        
                         color="success"
                       />
+                      </Avatar>
                       <div className="flex flex-col truncate">
                         <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
                           {user?.name}
@@ -358,13 +360,11 @@ export default function Navbar(): React.JSX.Element {
                       </div>
                     </div>
                     <Button
-                      color="danger"
-                      variant="flat"
+                      
+                      variant="primary"
                       className="w-full font-bold text-sm rounded-xl"
                       onClick={handleLogout}
-                      startContent={
-                        <ArrowRightFromSquare className="w-4 h-4 text-danger" />
-                      }
+                      
                     >
                       Log Out
                     </Button>
@@ -377,7 +377,7 @@ export default function Navbar(): React.JSX.Element {
                       className="w-full"
                     >
                       <Button
-                        variant="bordered"
+                        variant="primary"
                         className="w-full text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 font-bold text-sm rounded-xl"
                       >
                         Sign In

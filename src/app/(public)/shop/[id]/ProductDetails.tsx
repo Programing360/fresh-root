@@ -192,7 +192,7 @@ export default function ShopDetailsPage({
 
             <div className="mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-900 space-y-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">
               <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Category:</span> {product.category}</p>
-              <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Cuisine:</span> {product.cuisine}</p>
+              {/* <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Cuisine:</span> {product?.cuisine}</p> */}
               <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Delivery Time:</span> 3 days</p>
               {/* <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Ingredients:</span> {product?.ingredients.join(", ")}</p> */}
             </div>

@@ -31,3 +31,4 @@ export interface Product {
   relatedItems: string[];
   userId: string
 }
+
