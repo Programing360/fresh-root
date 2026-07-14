@@ -37,8 +37,6 @@ export default function Navbar(): React.JSX.Element {
   const { user, isPending } = useClientSession();
   const isLoggedIn = !!user;
 
-  console.log(user);
-
   // Real Sign Out Implementation using authClient
   const handleLogout = async () => {
     try {
@@ -85,7 +83,8 @@ export default function Navbar(): React.JSX.Element {
   const publicRoutes: NavRoute[] = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
-    { name: "Our Story", path: "/about" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
   ];
 
   const privateRoutes: NavRoute[] = [
@@ -93,7 +92,7 @@ export default function Navbar(): React.JSX.Element {
     { name: "Shop", path: "/shop" },
     { name: "Dashboard", path: "/dashboard" },
     { name: "Orders", path: "/orders" },
-    { name: "Add Product", path: "/add-product" },
+    { name: "Add Product", path: "/dashboard/item/add" },
   ];
 
   const routes: NavRoute[] = isLoggedIn ? privateRoutes : publicRoutes;

@@ -1,148 +1,234 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@heroui/react";
-import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import {  ArrowRight } from "lucide-react";
-import bannerImage from '../../../public/assets/foodImage.png'
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus } from "lucide-react";
+import Image from "next/image";
+import gsap from "gsap";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import Link from "next/link";
 
-export default function FreshRootHero(): React.JSX.Element {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
-  const textGroupRef = useRef<HTMLDivElement | null>(null);
-  const basketRef = useRef<HTMLDivElement | null>(null);
+// ৬ সেকেন্ড পর পর টেক্সট ও ইমেজ একসাথে সিঙ্ক করার জন্য ৪টি প্রিমিয়াম ডেটা স্লাইড
+// সব ইমেজ Unsplash-এর ভেরিফায়েড হাই-রেজোলিউশন লিংক দিয়ে আপডেট করা হয়েছে
+const BANNER_SLIDES = [
+  {
+    badge: "Organio 100% Genuine Product Served",
+    title: "Fresh & Healthy Organic Vegetables",
+    highlightWord: "Healthy",
+    desc: "A value you can't pass up, we simplify the fee into two areas inspection and annual certification.",
+    img: "https://i.ibb.co.com/Mx50nKj8/h6-slider-layer4.png" // Pineapple & green juice composition matching image_b44609.png
+  },
+  {
+    badge: "100% Natural Pure Energy Boost",
+    title: "Pure & Organic Fresh Bio Juices",
+    highlightWord: "Organic",
+    desc: "Experience the ultimate hydration with our vitamins enriched cold-pressed juices directly from the farm.",
+    img: "https://i.ibb.co.com/h1mdnx4X/h4-banner4.png" // Fresh juice glass bottle composition
+  },
+  {
+    badge: "Freshly Picked Premium Selection",
+    title: "Rich Taste Delicious Natural Greens",
+    highlightWord: "Delicious",
+    desc: "Fresh, crispy, and organically harvested green vegetables packed with absolute care and nutrition.",
+    img: "https://i.ibb.co.com/1tHBgSNn/h3-layer3.png" // Organic fresh vegetables composition
+  },
+  {
+    badge: "Straight from the local Eco-Farms",
+    title: "Premium Quality Fresh Garden Harvest",
+    highlightWord: "Premium",
+    desc: "A beautiful handpicked selection of fresh vegetables directly from eco-friendly local organic farms.",
+    img: "https://i.ibb.co.com/JWk6BNt9/h4-banner1.png" // Farm fresh garden harvest
+  }
+];
 
+// বটম ইনফিনিট মার্কি স্লাইডারের ডেটা (ম্যাক্স ৪)
+const SLIDER_ITEMS = [
+  { id: 1, name: "Organic Honey", tag: "100% Pure", price: "$12.99", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=150&auto=format&fit=crop&q=60" },
+  { id: 2, name: "Fresh Strawberry", tag: "Premium Quality", price: "$24.50", img: "https://i.ibb.co.com/MyqBKkxY/h3-product13-600x530.png" },
+  { id: 3, name: "Natural Jaggery", tag: "Chemical Free", price: "$8.99", img: "https://i.ibb.co.com/h1mdnx4X/h4-banner4.png" },
+  { id: 4, name: "Organic Juice", tag: "Bio Extract", price: "$15.00", img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=150&auto=format&fit=crop&q=60" },
+];
+
+export default function BannerSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const leafTopRef = useRef<HTMLDivElement>(null);
+  const leafBottomRef = useRef<HTMLDivElement>(null);
+
+  // অটো-প্লে ব্যানার স্লাইডার (প্রতি ৬ সেকেন্ড পর পর চেঞ্জ হবে)
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-
-      // Clean staggered presentation entry
-      tl.fromTo(
-        sectionRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 1 }
-      )
-      .fromTo(
-        textGroupRef.current ? textGroupRef.current.children : [],
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 1, stagger: 0.15 },
-        "-=0.5"
-      )
-      .fromTo(
-        basketRef.current,
-        { scale: 0.85, x: 80, opacity: 0 },
-        { scale: 1, x: 0, opacity: 1, duration: 1.4, ease: "elastic.out(1, 0.75)" },
-        "-=0.8"
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % BANNER_SLIDES.length);
+    }, 6000);
+    return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    AOS.init({ duration: 1000, once: true });
+
+    // GSAP floating background animation
+    if (leafTopRef.current && leafBottomRef.current) {
+      gsap.to(leafTopRef.current, {
+        y: 12,
+        rotation: 6,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+      });
+      gsap.to(leafBottomRef.current, {
+        y: -15,
+        rotation: -8,
+        duration: 3.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+      });
+    }
+  }, []);
+
+  // টেক্সট স্প্লিট হাইলাইট মেকার
+  const renderTitle = (title: string, highlight: string) => {
+    const parts = title.split(new RegExp(`(${highlight})`, "gi"));
+    return parts.map((part, index) => 
+      part.toLowerCase() === highlight.toLowerCase() ? (
+        <span key={index} className="text-[#ff7a45] dark:text-[#ff9266]">{part}</span>
+      ) : part
+    );
+  };
+
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full h-[65vh] min-h-[520px] max-h-[680px] overflow-hidden bg-[#ebebeb] dark:bg-[#121412] select-none"
-    >
-      {/* 1. Canvas Layer: Realistic Split Background Design */}
-      <div className="absolute inset-0 w-full h-full flex">
-        {/* Deep luxurious forest green with realistic underlying texture overlay */}
-        <div className="relative w-[55%] h-full bg-[#03301c] bg-gradient-to-br from-[#022415] to-[#054227]">
-          <div className="absolute inset-0 opacity-15 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]" />
-          {/* Subtle natural organic root/vein mask pattern effect */}
-          <div className="absolute inset-0 opacity-5 mix-blend-screen bg-[url('https://www.transparenttextures.com/patterns/tree-bark.png')] scale-150 transform origin-top-left" />
-        </div>
-
-        {/* Clean, high-contrast light satin gray texturing */}
-        <div className="relative w-[45%] h-full bg-[#f4f4f2] dark:bg-[#1b1d1b]">
-          <div className="absolute inset-0 opacity-20 mix-blend-multiply dark:mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/fabric-of-the-nation.png')]" />
-        </div>
-
-        {/* High-fidelity torn brush edge layout divider border */}
-        <div 
-          className="absolute left-[54.5%] top-0 bottom-0 w-12 bg-gradient-to-b from-[#022415] to-[#054227] z-10 hidden md:block" 
-          style={{ clipPath: "polygon(100% 0, 40% 34%, 85% 66%, 0% 100%, 0 0)", filter: "blur(0.5px)" }}
-        />
+    <section className="relative w-full min-h-[85vh] flex flex-col justify-between overflow-hidden bg-[#f8f9fa] dark:bg-[#0b0f19] text-slate-950 dark:text-white transition-colors duration-300 py-12 px-6">
+      
+      {/* Background Leaves (GSAP Animated) */}
+      <div ref={leafTopRef} className="absolute top-10 right-10 w-12 h-12 pointer-events-none opacity-40">
+        <div className="w-4 h-4 rounded-full bg-emerald-400/80" />
+      </div>
+      <div ref={leafBottomRef} className="absolute bottom-40 left-8 w-14 h-14 pointer-events-none opacity-40">
+        <div className="w-3 h-3 rounded-full bg-orange-400/80" />
       </div>
 
-      {/* 2. Structured Layout Layer */}
-      <div className="absolute inset-0 mx-auto max-w-7xl w-full h-full px-6 sm:px-8 flex items-center z-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 w-full items-center gap-6">
-          
-          {/* Left Typography Branding Profile */}
-          <div ref={textGroupRef} className="col-span-1 md:col-span-7 flex flex-col items-start z-20">
-            
-            {/* Core Brand Badge Layout */}
-            <div className="flex items-center gap-2 mb-4 opacity-90 scale-95 origin-left">
-              <span className="text-xl">🌿</span>
-              <span className="text-sm font-bold tracking-widest text-emerald-400 font-sans">FRESHROOT</span>
-            </div>
-
-            {/* Elegant Flowing Cursive Script Accent */}
-            <span className="text-2xl sm:text-4xl font-medium text-[#ffd700] italic tracking-wide font-serif mb-1 drop-shadow-sm block">
-              Fresh and Healthy
-            </span>
-
-            {/* Distressed Styled Clean Heavyweight Title Header */}
-            <h1 
-              className="text-[3.2rem] sm:text-[5.8rem] font-black tracking-tighter leading-[0.9] text-white select-none relative font-sans"
-              style={{ WebkitTextStroke: "1px rgba(255,255,255,0.1)" }}
-            >
-              VEGETABLE
-            </h1>
-
-            {/* Sub-contextual Details with left highlight line anchor */}
-            <div className="mt-5 flex flex-col gap-1 border-l-2 border-[#ffd700] pl-4">
-              <span className="text-xl sm:text-2xl font-black tracking-wider text-neutral-100">
-                UP TO 50% OFF
-              </span>
-              <span className="text-xs sm:text-sm font-medium text-neutral-300 opacity-80 tracking-wide">
-                We Are Open: 10.00a.m - 20.00 p.m
-              </span>
-            </div>
-
-            {/* Highly Interactive Glow Action CTA Button */}
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                fullWidth
-                className="relative mt-8 bg-[#ffdf1b] hover:bg-[#ffe53b] text-[#03301c] font-black px-8 py-6 shadow-[0_10px_30px_rgba(255,223,27,0.25)] group transition-all duration-300"
-              >
-                ORDER NOW
-              </Button>
-              {/* <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform md:absolute md:top-12 md:right-3" /> */}
-            </motion.div>
-          </div>
-
-          {/* Right Product Composite Container */}
-          <div className="col-span-1 md:col-span-5 relative w-full h-full hidden md:flex items-center justify-center">
-            
-            {/* Decorative Glint / Sparkle Flares */}
+      {/* Main Grid Wrapper with max-w-7xl mx-auto */}
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto relative z-10">
+        
+        {/* Left Content Column (Bottom to Top Text Animation) */}
+        <div className="lg:col-span-7 h-[380px] flex flex-col justify-center text-left relative overflow-hidden">
+          <AnimatePresence mode="wait">
             <motion.div 
-              animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.1, 0.9] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              className="absolute top-1/4 right-10 text-white/40 pointer-events-none z-30"
+              key={currentSlide}
+              initial={{ opacity: 0, y: 40 }} // নিচ থেকে ওপরে উঠবে
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="space-y-5 absolute left-0 right-0"
             >
-              {/* <Sparkles size={24} className="text-[#ffd700]" /> */}
-            </motion.div>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs md:text-sm font-bold tracking-wide">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {BANNER_SLIDES[currentSlide].badge}
+              </div>
 
-            {/* Fluid Floating Hover Basket Object */}
-            <motion.div
-              ref={basketRef}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="relative w-[120%] h-full drop-shadow-[0_30px_45px_rgba(0,0,0,0.38)]"
-            >
-              <Image
-                src={bannerImage}
-                alt="Wicker basket with organic tomatoes, greens, eggplant, and carrots"
-                fill
-                priority
-                className="object-contain w-[380px]"
-              />
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]">
+                {renderTitle(BANNER_SLIDES[currentSlide].title, BANNER_SLIDES[currentSlide].highlightWord)}
+              </h1>
+
+              <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-xl font-medium leading-relaxed">
+                {BANNER_SLIDES[currentSlide].desc}
+              </p>
+
+              <div className="pt-2 flex items-center gap-4">
+               <Link href={'/shop'}>
+                 <Button
+                  size="lg"
+                  className="bg-[#ff7a45] hover:bg-[#ff662b] text-white font-bold rounded-xl px-8 py-6 shadow-md shadow-orange-500/10 dark:shadow-none transition-all duration-300 text-base"
+                  // endContent={<Plus size={18} />}
+                >
+                  Shop Now
+                </Button>
+               </Link>
+
+                {/* স্লাইডার ইন্ডিকেটর ডটস */}
+                <div className="flex gap-2 items-center">
+                  {BANNER_SLIDES.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`h-2.5 rounded-full transition-all duration-300 ${
+                        currentSlide === idx ? "w-6 bg-emerald-500" : "w-2.5 bg-slate-300 dark:bg-slate-700"
+                      }`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
             </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Right Slider Column (Right to Left Image Animation with Custom Bottom Drop Shadow) */}
+        <div className="lg:col-span-5 flex justify-center relative w-full h-[320px] sm:h-[400px] md:h-[450px]">
+          <div className="absolute w-72 h-72 bg-emerald-400/20 dark:bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          
+          <div className="relative w-full h-full max-w-[420px] rounded-3xl overflow-hidden p-2 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, x: 80, scale: 0.98 }} // ডান থেকে বামে স্লাইড হবে
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -80, scale: 0.98 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="relative w-full h-full flex flex-col items-center justify-center"
+              >
+                {/* ইমেজ কন্টেনার - নো বর্ডার, নো ব্যাকগ্রাউন্ড বক্স শ্যাডো */}
+                <div className="relative w-full h-[90%]">
+                  <Image
+                    src={BANNER_SLIDES[currentSlide].img}
+                    alt="Organic Premium Product Showcase"
+                    fill
+                    priority
+                    className="object-contain"
+                  />
+                </div>
+                {/* হালকা বটম ড্রপ শ্যাডো - হুবহু image_b44609.png-এর মতো ওভাল শেপ শ্যাডো */}
+                <div className="absolute bottom-2 w-[70%] h-4 bg-black/15 dark:bg-black/40 blur-md rounded-full pointer-events-none" />
+              </motion.div>
+            </AnimatePresence>
           </div>
+        </div>
+      </div>
 
+      {/* Infinite Left to Right Slider (css-marquee) with max-w-7xl mx-auto */}
+      <div className="w-full mt-12 pt-6 border-t border-slate-200/60 dark:border-slate-800/80 overflow-hidden relative">
+        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#f8f9fa] dark:from-[#0b0f19] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#f8f9fa] dark:from-[#0b0f19] to-transparent z-10 pointer-events-none" />
+        
+        <div className="flex w-max gap-6 animate-marquee max-w-7xl mx-auto">
+          {/* Loop 1 */}
+          {SLIDER_ITEMS.map((item) => (
+            <div key={`slider-1-${item.id}`} className="flex items-center gap-4 bg-white dark:bg-[#151c2c] border border-slate-100 dark:border-slate-800/60 shadow-sm px-5 py-3 rounded-2xl min-w-[240px]">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900">
+                <Image src={item.img} alt={item.name} fill className="object-cover" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-emerald-500 tracking-wider block">{item.tag}</span>
+                <h4 className="text-sm font-bold">{item.name}</h4>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">{item.price}</p>
+              </div>
+            </div>
+          ))}
+          {/* Loop 2 */}
+          {SLIDER_ITEMS.map((item) => (
+            <div key={`slider-2-${item.id}`} className="flex items-center gap-4 bg-white dark:bg-[#151c2c] border border-slate-100 dark:border-slate-800/60 shadow-sm px-5 py-3 rounded-2xl min-w-[240px]">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900">
+                <Image src={item.img} alt={item.name} fill className="object-cover" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-emerald-500 tracking-wider block">{item.tag}</span>
+                <h4 className="text-sm font-bold">{item.name}</h4>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">{item.price}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -44,36 +44,36 @@ export default function FAQ(): React.JSX.Element {
     },
   ];
 
-  useEffect(() => {
-    if (!accordionGroupRef.current) return;
+  // useEffect(() => {
+  //   if (!accordionGroupRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Premium staggered entry cascade on scroll
-      gsap.fromTo(
-        accordionGroupRef.current!.children,
-        { 
-          y: 40, 
-          opacity: 0,
-          scale: 0.98
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1.2,
-          stagger: 0.12,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: accordionGroupRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, sectionRef);
+  //   const ctx = gsap.context(() => {
+  //     // Premium staggered entry cascade on scroll
+  //     gsap.fromTo(
+  //       accordionGroupRef.current!.children,
+  //       { 
+  //         y: 40, 
+  //         opacity: 0,
+  //         scale: 0.98
+  //       },
+  //       {
+  //         y: 0,
+  //         opacity: 1,
+  //         scale: 1,
+  //         duration: 1.2,
+  //         stagger: 0.12,
+  //         ease: "power4.out",
+  //         scrollTrigger: {
+  //           trigger: accordionGroupRef.current,
+  //           start: "top 85%",
+  //           toggleActions: "play none none none",
+  //         },
+  //       }
+  //     );
+  //   }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+  //   return () => ctx.revert();
+  // }, []);
 
   const toggleAccordion = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -119,6 +119,7 @@ export default function FAQ(): React.JSX.Element {
 
             return (
               <div
+              data-aos="flip-down"
                 key={faq.id}
                 className="rounded-[24px] border border-neutral-300/50 dark:border-neutral-800/60 bg-white/30 dark:bg-[#141614]/20 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.01)] hover:bg-white/70 dark:hover:bg-[#161a16]/60 transition-all duration-500 overflow-hidden"
               >

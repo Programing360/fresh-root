@@ -16,12 +16,19 @@ export const authHeaders = async (): Promise<HeadersInit> => {
   return headers;
 };
 
+export const publicFetch = async (apiUrl: string): Promise<Response> => {
+  const res = await fetch(`${baseURL}/${apiUrl}`);
+  return res;
+};
+
 export const protectedFetch = async (apiUrl: string): Promise<Response> => {
   const res = await fetch(`${baseURL}/${apiUrl}`, {
     headers: await authHeaders(),
   });
   return res;
 };
+
+
 
 export const serverAction = async (apiUrl: string, data:Partial<Product>) => {
 

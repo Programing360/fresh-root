@@ -60,36 +60,36 @@ export default function Blogs(): React.JSX.Element {
     },
   ];
 
-  useEffect(() => {
-    if (!gridRef.current) return;
+  // useEffect(() => {
+  //   if (!gridRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Elegant staggered entry layout cascade on scroll
-      gsap.fromTo(
-        gridRef.current!.children,
-        { 
-          y: 50, 
-          opacity: 0,
-          scale: 0.97
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1.2,
-          stagger: 0.15,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, sectionRef);
+  //   const ctx = gsap.context(() => {
+  //     // Elegant staggered entry layout cascade on scroll
+  //     gsap.fromTo(
+  //       gridRef.current!.children,
+  //       { 
+  //         y: 50, 
+  //         opacity: 0,
+  //         scale: 0.97
+  //       },
+  //       {
+  //         y: 0,
+  //         opacity: 1,
+  //         scale: 1,
+  //         duration: 1,
+         
+  //         ease: "power4.out",
+  //         scrollTrigger: {
+  //           trigger: gridRef.current,
+  //           start: "top 85%",
+  //           toggleActions: "play none none none",
+  //         },
+  //       }
+  //     );
+  //   }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <section
@@ -132,6 +132,7 @@ export default function Blogs(): React.JSX.Element {
           {blogPosts.map((post) => (
             <article
               key={post.id}
+              data-aos="zoom-in"
               className="group relative flex flex-col justify-between rounded-[32px] border border-neutral-300/40 dark:border-neutral-800/60 bg-white/30 dark:bg-[#141614]/20 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_25px_50px_rgba(0,0,0,0.25)] hover:bg-white/80 dark:hover:bg-[#161a16]/70 transition-all duration-500 cursor-pointer overflow-hidden"
             >
               <div>

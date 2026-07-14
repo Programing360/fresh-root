@@ -9,7 +9,7 @@ const page = async ({params}: PageProps) => {
 
   const shopProduct = await productsDetails(id);
 
-  console.log(shopProduct, id);
+  // console.log(shopProduct, id);
 
   return (
     <div>

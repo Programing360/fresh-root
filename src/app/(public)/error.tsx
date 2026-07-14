@@ -44,7 +44,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
     <div 
       ref={containerRef} 
-      className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 selection:bg-danger/20"
+      className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 selection:bg-danger/20 dark:bg-indigo-400"
     >
       <div 
         data-aos="zoom-in" 
@@ -54,7 +54,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         <div className="relative select-none py-4">
           <h1 
             ref={errorCodeRef}
-            className="text-8xl sm:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-default-600 via-default-400 to-default-200 dark:from-default-300 dark:via-default-500 dark:to-background drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)]"
+            className="text-8xl sm:text-9xl  font-black tracking-tighter dark:text-transparent bg-clip-text bg-gradient-to-b from-default-600 via-default-400 to-default-200 dark:from-default-300 dark:via-default-500 dark:to-background drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)]"
           >
             Oops!
           </h1>

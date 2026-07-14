@@ -1,6 +1,6 @@
 import { Product } from "@/types/product";
 import {
-  protectedFetch,
+  publicFetch,
   serverDelete,
   serverUpdate,
 } from "../core/server";
@@ -14,7 +14,7 @@ export const allProducts = async (): Promise<Product[]> => {
 };
 
 export const productsDetails = async (id: string): Promise<Product> => {
-  const res = await protectedFetch(`product/${id}`);
+  const res = await publicFetch(`product/${id}`);
   if (!res.ok) {
     throw new Error(`Failed to fetch product: ${res.status}`);
   }

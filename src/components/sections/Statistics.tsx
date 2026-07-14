@@ -63,28 +63,28 @@ export default function Statistics(): React.JSX.Element {
     if (!statsGridRef.current) return;
 
     const ctx = gsap.context(() => {
-      // 1. Staggered grid entrance cascade
-      gsap.fromTo(
-        statsGridRef.current!.children,
-        { 
-          y: 40, 
-          opacity: 0,
-          scale: 0.97
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          stagger: 0.12,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: statsGridRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
+      // // 1. Staggered grid entrance cascade
+      // gsap.fromTo(
+      //   statsGridRef.current!.children,
+      //   { 
+      //     y: 40, 
+      //     opacity: 0,
+      //     scale: 0.97
+      //   },
+      //   {
+      //     y: 0,
+      //     opacity: 1,
+      //     scale: 1,
+      //     duration: 1,
+      //     stagger: 0.12,
+      //     ease: "power4.out",
+      //     scrollTrigger: {
+      //       trigger: statsGridRef.current,
+      //       start: "top 85%",
+      //       toggleActions: "play none none none",
+      //     },
+      //   }
+      // );
 
       // 2. Hardware-accelerated incremental value counter logic
       countTargetsRef.current.forEach((target, index) => {

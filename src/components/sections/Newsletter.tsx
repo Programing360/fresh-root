@@ -16,35 +16,35 @@ export default function Newsletter(): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useEffect(() => {
-    if (!cardRef.current) return;
+  // useEffect(() => {
+  //   if (!cardRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Elegant pop, fade, and slight rotation entrance upon scroll entry
-      gsap.fromTo(
-        cardRef.current,
-        { 
-          y: 60, 
-          scale: 0.95, 
-          opacity: 0 
-        },
-        {
-          y: 0,
-          scale: 1,
-          opacity: 1,
-          duration: 1.4,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 88%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, containerRef);
+  //   const ctx = gsap.context(() => {
+  //     // Elegant pop, fade, and slight rotation entrance upon scroll entry
+  //     gsap.fromTo(
+  //       cardRef.current,
+  //       { 
+  //         y: 60, 
+  //         scale: 0.95, 
+  //         opacity: 0 
+  //       },
+  //       {
+  //         y: 0,
+  //         scale: 1,
+  //         opacity: 1,
+  //         duration: 1.4,
+  //         ease: "power4.out",
+  //         scrollTrigger: {
+  //           trigger: cardRef.current,
+  //           start: "top 88%",
+  //           toggleActions: "play none none none",
+  //         },
+  //       }
+  //     );
+  //   }, containerRef);
 
-    return () => ctx.revert();
-  }, []);
+  //   return () => ctx.revert();
+  // }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,13 +60,14 @@ export default function Newsletter(): React.JSX.Element {
   return (
     <section
       ref={containerRef}
+      
       className="w-full py-28 bg-[#f9f9f6] dark:bg-[#0e100e] text-[#1c1e1c] dark:text-neutral-100 transition-colors duration-500 overflow-hidden relative"
     >
       {/* Premium Multi-Layer Ambient Background Mesh Glows */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-emerald-500/10 blur-[130px] dark:bg-emerald-500/5 pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 w-[350px] h-[350px] rounded-full bg-teal-500/10 blur-[110px] dark:bg-teal-500/3 pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 relative z-10">
+      <div data-aos="zoom-in-up" className="max-w-5xl mx-auto px-6 sm:px-8 relative z-10">
         
         {/* Core Glassmorphic Subscription Card Panel Container */}
         <div

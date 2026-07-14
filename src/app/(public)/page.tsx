@@ -3,6 +3,7 @@ import CallToAction from "@/components/sections/CallToAction";
 import Categories from "@/components/sections/Categories";
 import FAQ from "@/components/sections/FAQ";
 import FeaturesGrid from "@/components/sections/Features";
+import BannerSection from "@/components/sections/Hero";
 import Hero from "@/components/sections/Hero";
 import Highlights from "@/components/sections/Highlights";
 import Newsletter from "@/components/sections/Newsletter";
@@ -18,7 +19,8 @@ export default async function Home() {
 
   return (
     <div className="">
-      <Hero></Hero>
+      {/* <Hero></Hero> */}
+      <BannerSection></BannerSection>
       <FeaturesGrid products={shopProducts}></FeaturesGrid>
       <Blogs />
       <Services />

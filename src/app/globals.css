@@ -26,3 +26,21 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, 'Plus Jakarta Sans',  sans-serif ;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+/* মাউস হোভার করলে স্লাইডার পজ হওয়ার অপশন (ঐচ্ছিক প্রফেশনাল লুক) */
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

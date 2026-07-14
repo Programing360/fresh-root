@@ -56,48 +56,48 @@ export default function Highlights(): React.JSX.Element {
     },
   ];
 
-  useEffect(() => {
-    if (!containerRef.current || !leftPinRef.current || !rightCardsRef.current) return;
+  // useEffect(() => {
+  //   if (!containerRef.current || !leftPinRef.current || !rightCardsRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Create modern desktop layout pinning rule matching user scrolling speeds
-      ScrollTrigger.create({
-        trigger: leftPinRef.current,
-        start: "top 12%",
-        endTrigger: containerRef.current,
-        end: "bottom 85%",
-        pin: true,
-        pinSpacing: false,
-        scrub: true,
-        id: "left-pin",
-      });
+  //   const ctx = gsap.context(() => {
+  //     // Create modern desktop layout pinning rule matching user scrolling speeds
+  //     ScrollTrigger.create({
+  //       trigger: leftPinRef.current,
+  //       start: "top 12%",
+  //       endTrigger: containerRef.current,
+  //       end: "bottom 85%",
+  //       pin: true,
+  //       pinSpacing: false,
+  //       scrub: true,
+  //       id: "left-pin",
+  //     });
 
-      // Individual sequential cascading pop-up reveal for glass layers
-      gsap.fromTo(
-        rightCardsRef.current!.children,
-        { 
-          y: 80, 
-          opacity: 0,
-          scale: 0.95
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1.2,
-          stagger: 0.2,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: rightCardsRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, containerRef);
+  //     // Individual sequential cascading pop-up reveal for glass layers
+  //     gsap.fromTo(
+  //       rightCardsRef.current!.children,
+  //       { 
+  //         y: 80, 
+  //         opacity: 0,
+  //         scale: 0.95
+  //       },
+  //       {
+  //         y: 0,
+  //         opacity: 1,
+  //         scale: 1,
+  //         duration: 1.2,
+  //         stagger: 0.2,
+  //         ease: "power4.out",
+  //         scrollTrigger: {
+  //           trigger: rightCardsRef.current,
+  //           start: "top 80%",
+  //           toggleActions: "play none none none",
+  //         },
+  //       }
+  //     );
+  //   }, containerRef);
 
-    return () => ctx.revert();
-  }, []);
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <section
@@ -108,7 +108,7 @@ export default function Highlights(): React.JSX.Element {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start relative">
           
           {/* LEFT PANEL: Sticky Controlled Branding Anchor */}
-          <div ref={leftPinRef} className="lg:col-span-4 flex flex-col items-start z-20 self-start ">
+          <div data-aos="zoom-out-up" ref={leftPinRef} className="lg:col-span-4 flex flex-col items-start z-20 self-start ">
             <motion.span
               initial={{ opacity: 0, x: -15 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -133,6 +133,7 @@ export default function Highlights(): React.JSX.Element {
               const IconComp = item.icon;
               return (
                 <motion.div
+                data-aos="flip-right"
                   key={item.id}
                   whileHover={{ y: -4, scale: 1.005 }}
                   transition={{ type: "spring", stiffness: 300, damping: 24 }}

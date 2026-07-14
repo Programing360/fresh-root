@@ -17,54 +17,54 @@ export default function CallToAction(): React.JSX.Element {
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const buttonGroupRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (!glassCardRef.current) return;
+  // useEffect(() => {
+  //   if (!glassCardRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // 1. Massive card scale and reveal entrance sequence
-      gsap.fromTo(
-        glassCardRef.current,
-        { 
-          y: 80, 
-          scale: 0.94, 
-          opacity: 0 
-        },
-        {
-          y: 0,
-          scale: 1,
-          opacity: 1,
-          duration: 1.4,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: glassCardRef.current,
-            start: "top 88%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
+  //   const ctx = gsap.context(() => {
+  //     // 1. Massive card scale and reveal entrance sequence
+  //     gsap.fromTo(
+  //       glassCardRef.current,
+  //       { 
+  //         y: 80, 
+  //         scale: 0.94, 
+  //         opacity: 0 
+  //       },
+  //       {
+  //         y: 0,
+  //         scale: 1,
+  //         opacity: 1,
+  //         duration: 1.4,
+  //         ease: "power4.out",
+  //         scrollTrigger: {
+  //           trigger: glassCardRef.current,
+  //           start: "top 88%",
+  //           toggleActions: "play none none none",
+  //         },
+  //       }
+  //     );
 
-      // 2. Text micro-stagger paths inside the card
-      if (titleRef.current && buttonGroupRef.current) {
-        gsap.fromTo(
-          [titleRef.current, titleRef.current.nextElementSibling, buttonGroupRef.current],
-          { y: 25, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: glassCardRef.current,
-              start: "top 75%",
-            }
-          }
-        );
-      }
-    }, containerRef);
+  //     // 2. Text micro-stagger paths inside the card
+  //     if (titleRef.current && buttonGroupRef.current) {
+  //       gsap.fromTo(
+  //         [titleRef.current, titleRef.current.nextElementSibling, buttonGroupRef.current],
+  //         { y: 25, opacity: 0 },
+  //         {
+  //           y: 0,
+  //           opacity: 1,
+  //           duration: 1,
+  //           stagger: 0.15,
+  //           ease: "power3.out",
+  //           scrollTrigger: {
+  //             trigger: glassCardRef.current,
+  //             start: "top 75%",
+  //           }
+  //         }
+  //       );
+  //     }
+  //   }, containerRef);
 
-    return () => ctx.revert();
-  }, []);
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <section
@@ -75,7 +75,7 @@ export default function CallToAction(): React.JSX.Element {
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[140px] dark:bg-emerald-500/3 pointer-events-none" />
       <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-teal-500/10 blur-[120px] dark:bg-teal-500/2 pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 relative z-10">
+      <div data-aos="flip-down" className="max-w-6xl mx-auto px-6 sm:px-8 relative z-10">
         
         {/* Core Glassmorphic CTA Wrapper Panel */}
         <div
@@ -102,7 +102,7 @@ export default function CallToAction(): React.JSX.Element {
               </h2>
               
               <p className="mt-6 text-sm sm:text-base text-neutral-600 dark:text-neutral-400 font-medium leading-relaxed max-w-xl">
-                Switching to certified, lab-traceable chemical-free nutrition shouldn't be a gamble. Join thousands of health-focused households sourcing directly from verified biomorphic farms today.
+                Switching to certified, lab-traceable chemical-free nutrition should not be a gamble. Join thousands of health-focused households sourcing directly from verified biomorphic farms today.
               </p>
 
               {/* Trust Badges */}

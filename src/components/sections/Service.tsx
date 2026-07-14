@@ -58,36 +58,36 @@ export default function Services(): React.JSX.Element {
     },
   ];
 
-  useEffect(() => {
-    if (!cardsContainerRef.current) return;
+  // useEffect(() => {
+  //   if (!cardsContainerRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Premium cascading entrance reveal on scroll
-      gsap.fromTo(
-        cardsContainerRef.current!.children,
-        { 
-          y: 60, 
-          opacity: 0,
-          scale: 0.95
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1.2,
-          stagger: 0.15,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: cardsContainerRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, sectionRef);
+  //   const ctx = gsap.context(() => {
+  //     // Premium cascading entrance reveal on scroll
+  //     gsap.fromTo(
+  //       cardsContainerRef.current!.children,
+  //       { 
+  //         y: 60, 
+  //         opacity: 0,
+  //         scale: 0.95
+  //       },
+  //       {
+  //         y: 0,
+  //         opacity: 1,
+  //         scale: 1,
+  //         duration: 1.2,
+  //         stagger: 0.15,
+  //         ease: "power4.out",
+  //         scrollTrigger: {
+  //           trigger: cardsContainerRef.current,
+  //           start: "top 85%",
+  //           toggleActions: "play none none none",
+  //         },
+  //       }
+  //     );
+  //   }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <section
@@ -139,6 +139,7 @@ export default function Services(): React.JSX.Element {
             const IconElement = service.icon;
             return (
               <motion.div
+              data-aos="flip-left"
                 key={service.id}
                 whileHover={{ y: -6, scale: 1.005 }}
                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
