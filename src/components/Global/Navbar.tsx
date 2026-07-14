@@ -17,6 +17,7 @@ import { gsap } from "gsap";
 import { Sun, Moon, LayoutDashboard } from "lucide-react";
 import { ArrowRightFromSquare, Gear, Persons } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
+import { useClientSession } from "@/lib/core/session-client";
 
 interface NavRoute {
   name: string;
@@ -33,9 +34,10 @@ export default function Navbar(): React.JSX.Element {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   // Better-Auth Session Hook
-  const { data: session, isPending } = authClient.useSession();
-  const user = session?.user;
+  const { user, isPending } = useClientSession();
   const isLoggedIn = !!user;
+
+  console.log(user);
 
   // Real Sign Out Implementation using authClient
   const handleLogout = async () => {
@@ -51,6 +53,7 @@ export default function Navbar(): React.JSX.Element {
     } catch (error) {
       console.error("Logout failed:", error);
     }
+    
   };
 
   // Safe Hydration & Theme Checker
@@ -168,7 +171,7 @@ export default function Navbar(): React.JSX.Element {
             variant="primary"
             // size="xl"
             onClick={toggleTheme}
-            className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/50"
+            className="text-white dark:text-neutral-300 bg-[#00b26b] dark:bg-neutral-800/50"
             aria-label="Toggle System Theme"
           >
             <motion.div
@@ -195,43 +198,47 @@ export default function Navbar(): React.JSX.Element {
               <Dropdown>
                 <Dropdown.Trigger className="rounded-full">
                   <Avatar>
-                    <Avatar.Image
-                      alt="Junior Garcia"
-                      src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
-                    />
-                    <Avatar.Fallback delayMs={600}>JD</Avatar.Fallback>
+                    <Avatar.Image alt="Junior Garcia" src={user?.image || ""} />
+                    <Avatar.Fallback className="bg-indigo-150 dark:bg-[#31106a] font-bold text-xs text-indigo-600 dark:text-purple-200">
+                      {user.name?.slice(0, 1).toUpperCase()}
+                    </Avatar.Fallback>
                   </Avatar>
                 </Dropdown.Trigger>
                 <Dropdown.Popover>
                   <div className="px-3 pt-3 pb-1">
                     <div className="flex items-center gap-2">
                       <Avatar size="sm">
-                        <Avatar.Image
-                          alt="Jane"
-                          src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
-                        />
-                        <Avatar.Fallback delayMs={600}>JD</Avatar.Fallback>
+                        <Avatar.Image alt="Jane" src={user?.image || ""} />
+                        <Avatar.Fallback className="bg-indigo-50 dark:bg-[#31106a] font-bold text-xs text-indigo-700 dark:text-purple-200">
+                          {user.name?.slice(0, 2).toUpperCase()}
+                        </Avatar.Fallback>
                       </Avatar>
                       <div className="flex flex-col gap-0">
                         <p className="text-sm leading-5 font-medium">
-                          Jane Doe
+                          {user.name}
                         </p>
                         <p className="text-xs leading-none text-muted">
-                          jane@example.com
+                          {user.email}
                         </p>
                       </div>
                     </div>
                   </div>
                   <Dropdown.Menu>
                     <Dropdown.Item id="dashboard" textValue="Dashboard">
-                      <Label>Dashboard</Label>
+                      <Link href="/dashboard">
+                        <Label>Dashboard</Label>
+                      </Link>
                     </Dropdown.Item>
                     <Dropdown.Item id="profile" textValue="Profile">
-                      <Label>Profile</Label>
+                      <Link href="/dashboard/profile">
+                        <Label>Profile</Label>
+                      </Link>
                     </Dropdown.Item>
                     <Dropdown.Item id="settings" textValue="Settings">
                       <div className="flex w-full items-center justify-between gap-2">
-                        <Label>Settings</Label>
+                        <Link href="/dashboard/setting">
+                          <Label>Settings</Label>
+                        </Link>
                         <Gear className="size-3.5 text-muted" />
                       </div>
                     </Dropdown.Item>
@@ -242,12 +249,13 @@ export default function Navbar(): React.JSX.Element {
                       </div>
                     </Dropdown.Item>
                     <Dropdown.Item
-                      id="logout"
                       textValue="Logout"
                       variant="danger"
                     >
                       <div className="flex w-full items-center justify-between gap-2">
-                        <Label>Log Out</Label>
+                        <Button onClick={handleLogout} className='bg-[#00bb6d]'>
+                          Log Out
+                        </Button>
                         <ArrowRightFromSquare className="size-3.5 text-danger" />
                       </div>
                     </Dropdown.Item>
@@ -340,15 +348,14 @@ export default function Navbar(): React.JSX.Element {
                     <div className="flex items-center gap-3 bg-neutral-200/30 dark:bg-neutral-800/30 p-2 rounded-xl border border-neutral-200/40 dark:border-neutral-800/40">
                       <Avatar>
                         <Avatar.Image
-                        sizes="sm"
-                        src={
-                          user?.image ||
-                          "https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"
-                        }
-                        className={user?.name || "User"}
-                        
-                        color="success"
-                      />
+                          sizes="sm"
+                          src={
+                            user?.image ||
+                            ""
+                          }
+                          className={user?.name || "User"}
+                          color="success"
+                        />
                       </Avatar>
                       <div className="flex flex-col truncate">
                         <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
@@ -360,11 +367,9 @@ export default function Navbar(): React.JSX.Element {
                       </div>
                     </div>
                     <Button
-                      
                       variant="primary"
                       className="w-full font-bold text-sm rounded-xl"
                       onClick={handleLogout}
-                      
                     >
                       Log Out
                     </Button>

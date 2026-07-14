@@ -50,7 +50,6 @@ export default function Login(): React.JSX.Element {
         return;
       }
 
-      console.log(data, error);
       // Successful verification path processing execution
       toast.update(toastId, {
         render: "Secure signature accepted! Redirecting to hub...",

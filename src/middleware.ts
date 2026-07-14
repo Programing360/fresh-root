@@ -8,12 +8,12 @@ export function middleware(request: NextRequest) {
 
   // Protect paths starting with /items/add or /items/manage
   if (!token && (pathname.startsWith('/items/add') || pathname.startsWith('/items/manage'))) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/items/:path*'], // Applies middleware to all subroutes of /items
+  matcher: ['/shop/:path*'], // Applies middleware to all subroutes of /items
 };
