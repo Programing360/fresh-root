@@ -3,18 +3,28 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Login(): React.JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const router = useRouter();
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -41,7 +51,9 @@ export default function Login(): React.JSX.Element {
       if (error) {
         // Handle explicit auth pipeline payload errors
         toast.update(toastId, {
-          render: error.message || "Authentication failed. Please verify your details.",
+          render:
+            error.message ||
+            "Authentication failed. Please verify your details.",
           type: "error",
           isLoading: false,
           autoClose: 4000,
@@ -57,11 +69,60 @@ export default function Login(): React.JSX.Element {
         isLoading: false,
         autoClose: 2000,
       });
-      
     } catch (err: any) {
       // Catch unexpected networking execution blocks safely
       toast.update(toastId, {
         render: err?.message || "An unexpected connectivity error occurred.",
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    // if (!agreeTerms) {
+    //   toast.error("Please agree to the guidelines first!");
+    //   return;
+    // }
+    if (isLoading) return;
+
+    setIsLoading(true);
+    const toastId = toast.loading("Connecting to Google Secure Gate...");
+
+    try {
+      const { data, error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/", // সফল হলে হোম পেজে রিডাইরেক্ট হবে
+      });
+
+      console.log(data);
+
+      if (error) {
+        toast.update(toastId, {
+          render: error.message || "Google Sign-In failed.",
+          type: "error",
+          isLoading: false,
+          autoClose: 4000,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (data) {
+        router.push("/");
+      }
+
+      toast.update(toastId, {
+        render: "Google authentication approved!",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.message || "Failed to initialize Google Sign-In.",
         type: "error",
         isLoading: false,
         autoClose: 4000,
@@ -81,12 +142,21 @@ export default function Login(): React.JSX.Element {
         {/* LEFT COLUMN: Login Form Formulations */}
         <div className="lg:col-span-5 flex flex-col justify-between p-8 sm:p-12 md:p-16 bg-white/20 dark:bg-[#141614]/10 backdrop-blur-xl border-r border-neutral-300/40 dark:border-neutral-900/40 w-full relative z-20">
           {/* Top Branding Header */}
-          <div className="flex items-center justify-between w-full mb-12 lg:mb-0" data-aos="fade-down">
-            <Link href="/" className="flex items-center gap-2 group font-black text-xl tracking-tight text-neutral-900 dark:text-neutral-50">
+          <div
+            className="flex items-center justify-between w-full mb-12 lg:mb-0"
+            data-aos="fade-down"
+          >
+            <Link
+              href="/"
+              className="flex items-center gap-2 group font-black text-xl tracking-tight text-neutral-900 dark:text-neutral-50"
+            >
               <span className="w-8 h-8 rounded-lg bg-emerald-700 dark:bg-emerald-500 flex items-center justify-center text-white dark:text-black font-black text-base group-hover:rotate-6 transition-transform">
                 🌿
               </span>
-              fresh<span className="text-emerald-700 dark:text-emerald-400">Root</span>
+              fresh
+              <span className="text-emerald-700 dark:text-emerald-400">
+                Root
+              </span>
             </Link>
           </div>
 
@@ -100,12 +170,18 @@ export default function Login(): React.JSX.Element {
                 Welcome Back.
               </h2>
               <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-2">
-                Access your natural batch tracking profile and organic orders catalog.
+                Access your natural batch tracking profile and organic orders
+                catalog.
               </p>
             </div>
 
             {/* Input Target Submissions */}
-            <form onSubmit={handleLogin} className="mt-8 flex flex-col gap-4 w-full" data-aos="fade-up" data-aos-delay="200">
+            <form
+              onSubmit={handleLogin}
+              className="mt-8 flex flex-col gap-4 w-full"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {/* Email Input Field */}
               <div className="flex flex-col gap-1.5 relative">
                 <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
@@ -131,7 +207,10 @@ export default function Login(): React.JSX.Element {
                   <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
                     Password
                   </label>
-                  <Link href="/forgot-password" className="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:underline">
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:underline"
+                  >
                     Forgot secret?
                   </Link>
                 </div>
@@ -171,23 +250,76 @@ export default function Login(): React.JSX.Element {
                 ) : (
                   <>
                     Sign In to Account
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
                   </>
                 )}
+              </button>
+
+              {/* Divider Line */}
+              <div className="flex items-center gap-3 my-2 text-neutral-400 dark:text-neutral-600">
+                <div className="h-[1px] w-full bg-neutral-300/60 dark:bg-neutral-800" />
+                <span className="text-[10px] font-bold tracking-widest uppercase shrink-0">
+                  Or Join With
+                </span>
+                <div className="h-[1px] w-full bg-neutral-300/60 dark:bg-neutral-800" />
+              </div>
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                // disabled={!agreeTerms || isLoading}
+                className="w-full py-3.5 px-4 rounded-2xl border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-black/20 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-all font-bold text-sm flex items-center justify-center gap-3 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    className="text-[#4285F4]"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    className="text-[#34A853]"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    className="text-[#FBBC05]"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    className="text-[#EA4335]"
+                  />
+                </svg>
+                Continue with Google
               </button>
             </form>
 
             {/* Bottom Register Alternative */}
-            <p className="text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 mt-6" data-aos="fade-up" data-aos-delay="300">
+            <p
+              className="text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 mt-6"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               New to the purity loop?{" "}
-              <Link href="/auth/register" className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
+              <Link
+                href="/auth/register"
+                className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline"
+              >
                 Create an account
               </Link>
             </p>
           </div>
 
           {/* Footer Notice Row */}
-          <div className="text-center lg:text-left pt-6 lg:pt-0" data-aos="fade-up" data-aos-delay="400">
+          <div
+            className="text-center lg:text-left pt-6 lg:pt-0"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
             <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 tracking-wide select-none">
               Protected by multi-tier biological encryption systems.
             </span>
@@ -207,12 +339,18 @@ export default function Login(): React.JSX.Element {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
 
           {/* Floating Premium Glassmorphic Quote Badge Overlay */}
-          <div className="absolute bottom-12 left-12 right-12 p-8 rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-xl shadow-2xl max-w-xl text-left" data-aos="fade-left" data-aos-delay="400">
+          <div
+            className="absolute bottom-12 left-12 right-12 p-8 rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-xl shadow-2xl max-w-xl text-left"
+            data-aos="fade-left"
+            data-aos-delay="400"
+          >
             <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-xl mb-4 inline-block">
               100% Farm Verified
             </span>
             <blockquote className="text-xl font-medium tracking-tight text-white leading-relaxed">
-              “Sourcing raw food elements devoid of processing chemicals alters your cognitive clarity and baseline physical performance cycles completely.”
+              “Sourcing raw food elements devoid of processing chemicals alters
+              your cognitive clarity and baseline physical performance cycles
+              completely.”
             </blockquote>
             <div className="mt-4 flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />

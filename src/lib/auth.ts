@@ -12,6 +12,7 @@ const client = new MongoClient(mongoUri);
 const db = client.db('fresh_root');
 
 export const auth = betterAuth({
+
   database: mongodbAdapter(db, {
     // Optional: if you don't provide a client, database transactions won't be enabled.
     client,
@@ -20,9 +21,9 @@ export const auth = betterAuth({
     enabled: true,
   },  
   socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
   user: {
