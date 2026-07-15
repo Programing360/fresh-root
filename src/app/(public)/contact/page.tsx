@@ -19,11 +19,10 @@ export default function ContactPage() {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    // const formData = new FormData(e.currentTarget);
+    // const data = Object.fromEntries(formData.entries());
 
     
-    console.log("Contact Data Submitted:", data);
 
   
     setTimeout(() => {

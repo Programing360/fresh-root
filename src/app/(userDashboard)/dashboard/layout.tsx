@@ -72,7 +72,6 @@ function DashboardLayoutInner({
 
   // CHANGE: user now comes straight from the real session hook, no more mock
   const { user, session, isPending } = useClientSession();
-  console.log(user);
 
   // Authentication shielding routing framework guard
   useEffect(() => {

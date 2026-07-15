@@ -6,6 +6,7 @@ import { Button } from "@heroui/react";
 import gsap from "gsap";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { toast } from "react-toastify";
 
 interface ErrorPageProps {
   error?: Error & { digest?: string };
@@ -20,7 +21,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
   useEffect(() => {
     // Log the error securely if passed from Next.js global error boundaries
     if (error) {
-      console.error("Caught system runtime boundary exception:", error);
+      toast.error("Caught system runtime boundary exception:");
     }
 
     // Initialize AOS Entrance animations

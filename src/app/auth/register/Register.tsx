@@ -110,7 +110,8 @@ export default function Register(): React.JSX.Element {
         setIsLoading(false);
         return;
       }
-      console.log(data);
+
+      
       if (data) {
         router.push("/");
       }

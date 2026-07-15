@@ -12,7 +12,7 @@ const page = async() => {
     const roleBaseData = user?.role === 'admin' ? shopProduct : manageProducts
 
 
-    // console.log(roleBaseData);
+
 
     return (
         <Suspense fallback={<div>Loading.....</div>}>

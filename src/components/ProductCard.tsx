@@ -60,13 +60,13 @@ export default function ProductCard({
   const handleCompare = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(`Added to compare: ${product._id}`);
+    // console.log(`Added to compare: ${product._id}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(`Added to cart: ${product._id}`);
+    // console.log(`Added to cart: ${product._id}`);
   };
 
   return (

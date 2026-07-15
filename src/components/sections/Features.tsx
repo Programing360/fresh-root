@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/types/product";
 import { addToCart, addToWishlist, removeFromWishlist } from "@/lib/api/cart";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -69,7 +70,9 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
     try {
       await addToCart(productId, 1);
     } catch (err) {
-      console.error(err);
+      if(err){
+       toast.error('something is Wrong') 
+      }
     } finally {
       setLoadingCartId(null);
     }
@@ -97,7 +100,9 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
         setWishlisted((prev) => new Set(prev).add(productId));
       }
     } catch (err) {
-      console.error(err);
+      if(err){
+       toast.error('something is Wrong') 
+      }
     } finally {
       setLoadingWishlistId(null);
     }

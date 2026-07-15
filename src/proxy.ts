@@ -5,7 +5,6 @@ export function proxy(request: NextRequest) {
   // Replace this with your actual JWT/Cookie check logic
   const token = request.cookies.get('token')?.value; 
   const { pathname } = request.nextUrl;
-  console.log(pathname);
   // Protect paths starting with /items/add or /items/manage
   if (!token && (pathname.startsWith('/dashboard/items/add') || pathname.startsWith('/dashboard/items/manage'))) {
     return NextResponse.redirect(new URL('/auth/login', request.url));

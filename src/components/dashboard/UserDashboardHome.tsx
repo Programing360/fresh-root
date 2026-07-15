@@ -39,8 +39,6 @@ export default function UserDashboardHomePage({shopProducts}: ProductsProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  console.log(shopProducts);
-
 
   const metricCards = [
     { title: "Total Products", value: `${shopProducts?.length}`, description: "Active catalog listings", trend: { value: 12, isPositive: true }, icon: Package },

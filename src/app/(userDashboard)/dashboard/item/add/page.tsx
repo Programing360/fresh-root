@@ -55,7 +55,7 @@ export default function AddItemPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { user } = useClientSession();
-  console.log(user);
+
   const [formData, setFormData] = useState<FormData>({
     title: "",
     shortDescription: "",
@@ -143,8 +143,11 @@ export default function AddItemPage() {
       } else {
         alert("Image upload failed. Check API key configuration.");
       }
-    } catch (error) {
-      console.error("Error uploading image:", error);
+    } catch (err) {
+      if (err) {
+        toast.error("something is Wrong");
+      }
+    
     } finally {
       setIsUploading(false);
     }
@@ -154,7 +157,6 @@ export default function AddItemPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Backend-এর জন্য সঠিক type-এ convert করা
     const payload = {
       ...formData,
       price: Number(formData.price),
@@ -168,20 +170,16 @@ export default function AddItemPage() {
       userId: user?.id,
     };
 
-    console.log(formData);
-
     try {
       const result = await addProduct(payload);
 
       if (result.insertedId) {
         toast.success("Product Added Successfully");
-        // handleReset();
       }
-
-      console.log("Submitting Item Data: ", payload, result);
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to add product");
+      if (err) {
+        toast.error("Failed to add product");
+      }
     } finally {
       setIsSubmitting(false);
     }

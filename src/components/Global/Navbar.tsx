@@ -18,6 +18,7 @@ import { Sun, Moon, LayoutDashboard } from "lucide-react";
 import { ArrowRightFromSquare, Gear, Persons } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
 import { useClientSession } from "@/lib/core/session-client";
+import { toast } from "react-toastify";
 
 interface NavRoute {
   name: string;
@@ -48,8 +49,11 @@ export default function Navbar(): React.JSX.Element {
           },
         },
       });
-    } catch (error) {
-      console.error("Logout failed:", error);
+    } catch (err) {
+      if(err){
+             toast.error('something is Wrong') 
+            }
+      // console.error("Logout failed:", error);
     }
     
   };
