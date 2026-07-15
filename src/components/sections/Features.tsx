@@ -68,7 +68,6 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
     setLoadingCartId(productId);
     try {
       await addToCart(productId, 1);
-      // এখানে চাইলে toast notification দেখাতে পারো (e.g. react-hot-toast)
     } catch (err) {
       console.error(err);
     } finally {
@@ -118,7 +117,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
               const isActive = activeCategory === category;
               return (
                 <button
-                data-aos="flip-left"
+                  data-aos="flip-left"
                   key={i}
                   onClick={() => handleCategoryChange(category)}
                   className={`px-4 py-2 text-xs sm:text-sm font-bold tracking-wide rounded-full transition-all duration-200 outline-none ${
@@ -182,15 +181,18 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
                           className="fill-amber-400 text-amber-400"
                           size={12}
                         />
-                        {product?.rating.toFixed(2)}
+                        {product?.rating}
                       </span>
                     </div>
 
                     <div className="relative aspect-square w-full flex items-center justify-center p-4 mt-4 mb-6">
                       <div className="relative w-full h-full max-h-[140px] aspect-square transition-transform duration-300 group-hover:scale-105">
                         <Image
-                          src={product.image}
-                          alt={product.title}
+                          src={
+                            product?.image ||
+                            "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=600"
+                          }
+                          alt={product.title || "Product Image"}
                           fill
                           className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal rounded-lg"
                           loading="lazy"

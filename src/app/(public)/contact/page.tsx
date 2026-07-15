@@ -22,10 +22,10 @@ export default function ContactPage() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    // এখানে আপনার কাস্টম API বা Server Action কল করতে পারেন
+    
     console.log("Contact Data Submitted:", data);
 
-    // ডেমো সাবমিশন ডিলে
+  
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
@@ -53,7 +53,7 @@ export default function ContactPage() {
             className="text-4xl md:text-5xl font-black tracking-tight"
           >
             We would Love to{" "}
-            <span className="text-[#ff7a45] dark:text-[#ff9266]">Hear</span>{" "}
+            <span className="text-[#00b76c] dark:text-[#00b76c]">Hear</span>{" "}
             From You
           </motion.h1>
           <motion.p
@@ -155,7 +155,7 @@ export default function ContactPage() {
             data-aos="fade-left"
           >
             <form onSubmit={handleFormSubmit} className="space-y-6">
-              {/* ইনপুট ফিল্ডগুলো এখন সিঙ্গেল কলাম লেআউটে সাজানো */}
+             
               <div className="flex flex-col gap-6">
                 <Input
                   name="name"
@@ -187,15 +187,15 @@ export default function ContactPage() {
                 />
               </div>
 
-              {/* ফুল-উইডথ বাটন এবং বটম-টু-টপ হোভার অ্যানিমেশন */}
+             
               <div className="pt-2">
                 <Button
                   type="submit"
                   isPending={loading}
                   className="relative w-full text-base font-bold text-white rounded-xl py-6 shadow-md shadow-orange-500/10 dark:shadow-none overflow-hidden group bg-[#ff7a45] z-10 transition-colors duration-300"
                 >
-                  {/* হোভার ব্যাকগ্রাউন্ড লেয়ার (নিচ থেকে ওপরে উঠবে) */}
-                  <span className="absolute inset-0 bg-[#ff662b] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-[-1]" />
+                 
+                  <span className="absolute inset-0 bg-[#00b76c] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-[-1]" />
 
                   {loading ? "Sending..." : "Send Message"}
                 </Button>

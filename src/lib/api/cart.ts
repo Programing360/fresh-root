@@ -4,7 +4,7 @@ export const addToCart = async (productId: string, quantity: number = 1) => {
   const res = await fetch(`${baseURL}/cart`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // যদি cookie-based auth ব্যবহার করো
+    credentials: "include", 
     body: JSON.stringify({ productId, quantity }),
   });
 

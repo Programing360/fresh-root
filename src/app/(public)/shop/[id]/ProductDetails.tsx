@@ -30,7 +30,9 @@ export default function ShopDetailsPage({
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   // Gallery images: fall back to the single `image` field if `images` array is empty
-  const galleryImages = product.images?.length ? product.images : [product.image];
+  const galleryImages = product.images?.length
+    ? product.images
+    : [product.image];
   const [activeImage, setActiveImage] = useState<string>(galleryImages[0]);
 
   const incrementQty = () => setQuantity((prev) => prev + 1);
@@ -56,9 +58,16 @@ export default function ShopDetailsPage({
             Shop
           </h1>
           <nav className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-200/90">
-            <Link href="/" className="hover:text-emerald-400 transition-colors">Home</Link>
+            <Link href="/" className="hover:text-emerald-400 transition-colors">
+              Home
+            </Link>
             <span className="text-neutral-400">»</span>
-            <Link href="/shop" className="hover:text-emerald-400 transition-colors">Products</Link>
+            <Link
+              href="/shop"
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Products
+            </Link>
             <span className="text-neutral-400">»</span>
             <span className="text-emerald-400 font-bold">{product.title}</span>
           </nav>
@@ -76,8 +85,11 @@ export default function ShopDetailsPage({
               </button>
               <div className="relative w-full h-full max-w-[380px] aspect-square transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src={activeImage}
-                  alt={product.title}
+                  src={
+                    product?.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=600"
+                  }
+                  alt={product.title || "Product Image"}
                   fill
                   className="object-contain mix-blend-multiply dark:mix-blend-normal rounded-xl"
                 />
@@ -134,7 +146,8 @@ export default function ShopDetailsPage({
                 ))}
               </div>
               <span className="text-xs font-medium text-neutral-400 dark:text-neutral-500">
-                ({product.reviewCount} customer review{product.reviewCount !== 1 ? "s" : ""})
+                ({product.reviewCount} customer review
+                {product.reviewCount !== 1 ? "s" : ""})
               </span>
             </div>
 
@@ -143,7 +156,9 @@ export default function ShopDetailsPage({
                 {priceDisplay}
               </p>
               {product.discountPrice && (
-                <p className="text-base text-neutral-400 line-through">৳{product.price}</p>
+                <p className="text-base text-neutral-400 line-through">
+                  ৳{product.price}
+                </p>
               )}
             </div>
 
@@ -191,19 +206,51 @@ export default function ShopDetailsPage({
             </div>
 
             <div className="mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-900 space-y-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">
-              <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Category:</span> {product.category}</p>
+              <p>
+                <span className="font-bold text-neutral-700 dark:text-neutral-300">
+                  Category:
+                </span>{" "}
+                {product.category}
+              </p>
               {/* <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Cuisine:</span> {product?.cuisine}</p> */}
-              <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Delivery Time:</span> 3 days</p>
+              <p>
+                <span className="font-bold text-neutral-700 dark:text-neutral-300">
+                  Delivery Time:
+                </span>{" "}
+                3 days
+              </p>
               {/* <p><span className="font-bold text-neutral-700 dark:text-neutral-300">Ingredients:</span> {product?.ingredients.join(", ")}</p> */}
             </div>
 
             <div className="mt-6 pt-6 border-t border-neutral-100 dark:border-neutral-900 flex items-center gap-3">
-              <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">Share:</span>
+              <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">
+                Share:
+              </span>
               <div className="flex items-center gap-2 text-neutral-400 dark:text-neutral-500">
-                <a href="#" className="hover:text-emerald-500 transition-colors"><FaFacebook size={14} /></a>
-                <a href="#" className="hover:text-emerald-500 transition-colors"><FaTwitter size={14} /></a>
-                <a href="#" className="hover:text-emerald-500 transition-colors"><FaPinterest size={14} /></a>
-                <a href="#" className="hover:text-emerald-500 transition-colors"><FaLinkedin size={14} /></a>
+                <a
+                  href="#"
+                  className="hover:text-emerald-500 transition-colors"
+                >
+                  <FaFacebook size={14} />
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-emerald-500 transition-colors"
+                >
+                  <FaTwitter size={14} />
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-emerald-500 transition-colors"
+                >
+                  <FaPinterest size={14} />
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-emerald-500 transition-colors"
+                >
+                  <FaLinkedin size={14} />
+                </a>
               </div>
             </div>
           </div>

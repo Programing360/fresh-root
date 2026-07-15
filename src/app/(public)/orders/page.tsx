@@ -45,7 +45,7 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-[#0b0c0b] text-neutral-900 dark:text-neutral-100 px-4 py-16 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-[#0b0f19] text-neutral-900 dark:text-neutral-100 px-4 py-16 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
         {/* ==========================================

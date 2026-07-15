@@ -63,7 +63,7 @@ export default function Footer(): React.JSX.Element {
       { name: "Journals & Blogs", href: "/blog" },
     ],
     support: [
-      { name: "Help Center", href: "/faq" },
+      { name: "Help Center", href: "/support" },
       { name: "Shipping Policies", href: "/shipping" },
       { name: "Return & Refund", href: "/returns" },
       { name: "Contact Support", href: "/contact" },

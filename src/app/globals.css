@@ -40,7 +40,7 @@ body {
   animation: marquee 25s linear infinite;
 }
 
-/* মাউস হোভার করলে স্লাইডার পজ হওয়ার অপশন (ঐচ্ছিক প্রফেশনাল লুক) */
+
 .animate-marquee:hover {
   animation-play-state: paused;
 }

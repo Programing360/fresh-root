@@ -10,7 +10,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Link from "next/link";
 
-// স্ট্যাটস ডেটা
+
 const STATS = [
   { id: 1, value: "100%", label: "Organic & Pure" },
   { id: 2, value: "15K+", label: "Happy Customers" },
@@ -18,7 +18,7 @@ const STATS = [
   { id: 4, value: "0%", label: "Chemicals Used" },
 ];
 
-// কোর ভ্যালুজ ডেটা
+
 const VALUES = [
   {
     id: 1,
@@ -94,7 +94,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-6xl font-black tracking-tight"
           >
-            Serving Health & <span className="text-[#ff7a45] dark:text-[#ff9266]">Purity</span> Every Day
+            Serving Health & <span className="text-[#00b76c] dark:text-[#00b76c]">Purity</span> Every Day
           </motion.h1>
           
           <motion.p
@@ -159,7 +159,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {STATS.map((stat) => (
               <div key={stat.id} className="space-y-1">
-                <div className="text-3xl md:text-5xl font-black text-[#ff7a45] dark:text-[#ff9266]">
+                <div className="text-3xl md:text-5xl font-black text-[#00b76c] dark:text-[#00b76c]">
                   {stat.value}
                 </div>
                 <div className="text-xs md:text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
@@ -211,7 +211,7 @@ export default function AboutPage() {
             <Link href={'/shop'}>
                 <Button
               size="lg"
-              className="bg-[#ff7a45] hover:bg-[#ff662b] text-white font-bold rounded-xl px-8 py-6 shadow-md shadow-orange-500/10 dark:shadow-none transition-all duration-300 text-base"
+              className="bg-[#00b76c] hover:bg-[#037747] text-white font-bold rounded-xl px-8 py-6 shadow-md shadow-orange-500/10 dark:shadow-none transition-all duration-300 text-base"
             >
               Explore Products
             </Button>

@@ -10,8 +10,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Link from "next/link";
 
-// ৬ সেকেন্ড পর পর টেক্সট ও ইমেজ একসাথে সিঙ্ক করার জন্য ৪টি প্রিমিয়াম ডেটা স্লাইড
-// সব ইমেজ Unsplash-এর ভেরিফায়েড হাই-রেজোলিউশন লিংক দিয়ে আপডেট করা হয়েছে
+
 const BANNER_SLIDES = [
   {
     badge: "Organio 100% Genuine Product Served",
@@ -43,7 +42,7 @@ const BANNER_SLIDES = [
   }
 ];
 
-// বটম ইনফিনিট মার্কি স্লাইডারের ডেটা (ম্যাক্স ৪)
+
 const SLIDER_ITEMS = [
   { id: 1, name: "Organic Honey", tag: "100% Pure", price: "$12.99", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=150&auto=format&fit=crop&q=60" },
   { id: 2, name: "Fresh Strawberry", tag: "Premium Quality", price: "$24.50", img: "https://i.ibb.co.com/MyqBKkxY/h3-product13-600x530.png" },
@@ -56,7 +55,7 @@ export default function BannerSection() {
   const leafTopRef = useRef<HTMLDivElement>(null);
   const leafBottomRef = useRef<HTMLDivElement>(null);
 
-  // অটো-প্লে ব্যানার স্লাইডার (প্রতি ৬ সেকেন্ড পর পর চেঞ্জ হবে)
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % BANNER_SLIDES.length);
@@ -88,7 +87,7 @@ export default function BannerSection() {
     }
   }, []);
 
-  // টেক্সট স্প্লিট হাইলাইট মেকার
+
   const renderTitle = (title: string, highlight: string) => {
     const parts = title.split(new RegExp(`(${highlight})`, "gi"));
     return parts.map((part, index) => 
@@ -117,7 +116,7 @@ export default function BannerSection() {
           <AnimatePresence mode="wait">
             <motion.div 
               key={currentSlide}
-              initial={{ opacity: 0, y: 40 }} // নিচ থেকে ওপরে উঠবে
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -40 }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -147,7 +146,7 @@ export default function BannerSection() {
                 </Button>
                </Link>
 
-                {/* স্লাইডার ইন্ডিকেটর ডটস */}
+               
                 <div className="flex gap-2 items-center">
                   {BANNER_SLIDES.map((_, idx) => (
                     <button
@@ -173,13 +172,13 @@ export default function BannerSection() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, x: 80, scale: 0.98 }} // ডান থেকে বামে স্লাইড হবে
+                initial={{ opacity: 0, x: 80, scale: 0.98 }} 
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -80, scale: 0.98 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 className="relative w-full h-full flex flex-col items-center justify-center"
               >
-                {/* ইমেজ কন্টেনার - নো বর্ডার, নো ব্যাকগ্রাউন্ড বক্স শ্যাডো */}
+              
                 <div className="relative w-full h-[90%]">
                   <Image
                     src={BANNER_SLIDES[currentSlide].img}
@@ -189,7 +188,7 @@ export default function BannerSection() {
                     className="object-contain"
                   />
                 </div>
-                {/* হালকা বটম ড্রপ শ্যাডো - হুবহু image_b44609.png-এর মতো ওভাল শেপ শ্যাডো */}
+               
                 <div className="absolute bottom-2 w-[70%] h-4 bg-black/15 dark:bg-black/40 blur-md rounded-full pointer-events-none" />
               </motion.div>
             </AnimatePresence>

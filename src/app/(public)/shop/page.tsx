@@ -9,7 +9,7 @@ const page = async() => {
 
     return (
         <div>
-            <ShopPage products={products}></ShopPage>
+            <ShopPage initialProducts={products}></ShopPage>
         </div>
     );
 };

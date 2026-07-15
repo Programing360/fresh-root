@@ -4,7 +4,17 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, CheckSquare, Loader2 } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Sparkles,
+  CheckSquare,
+  Loader2,
+} from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { authClient } from "@/lib/auth-client";
@@ -27,7 +37,6 @@ export default function Register(): React.JSX.Element {
     });
   }, []);
 
-  // ইমেইল এবং পাসওয়ার্ড দিয়ে রেজিস্টার করার মেথড
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms || isLoading) return;
@@ -40,7 +49,7 @@ export default function Register(): React.JSX.Element {
         email,
         password,
         name,
-        callbackURL: "/", 
+        callbackURL: "/",
       });
 
       if (error) {
@@ -64,7 +73,6 @@ export default function Register(): React.JSX.Element {
       setTimeout(() => {
         router.push("/");
       }, 1500);
-
     } catch (err: any) {
       toast.update(toastId, {
         render: err?.message || "An unexpected networking issue occurred.",
@@ -76,7 +84,6 @@ export default function Register(): React.JSX.Element {
     }
   };
 
-  // গুগল দিয়ে সাইন-ইন/রেজিস্টার করার মেথড
   const handleGoogleSignIn = async () => {
     if (!agreeTerms) {
       toast.error("Please agree to the guidelines first!");
@@ -90,7 +97,7 @@ export default function Register(): React.JSX.Element {
     try {
       const { data, error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/", // সফল হলে হোম পেজে রিডাইরেক্ট হবে
+        callbackURL: "/",
       });
 
       if (error) {
@@ -103,14 +110,17 @@ export default function Register(): React.JSX.Element {
         setIsLoading(false);
         return;
       }
-      
+      console.log(data);
+      if (data) {
+        router.push("/");
+      }
+
       toast.update(toastId, {
         render: "Google authentication approved!",
         type: "success",
         isLoading: false,
         autoClose: 2000,
       });
-
     } catch (err: any) {
       toast.update(toastId, {
         render: err?.message || "Failed to initialize Google Sign-In.",
@@ -130,17 +140,24 @@ export default function Register(): React.JSX.Element {
 
       {/* Main Grid Structure Layout */}
       <div className="w-full min-h-screen grid grid-cols-1 lg:grid-cols-12 relative z-10">
-        
         {/* LEFT COLUMN: Registration Interface Box */}
         <div className="lg:col-span-5 flex flex-col justify-between p-8 sm:p-12 md:p-16 bg-white/20 dark:bg-[#141614]/10 backdrop-blur-xl border-r border-neutral-300/40 dark:border-neutral-900/40 w-full relative z-20">
-          
           {/* Top Branding Section */}
-          <div className="flex items-center justify-between w-full mb-10 lg:mb-0" data-aos="fade-down">
-            <Link href="/" className="flex items-center gap-2 group font-black text-xl tracking-tight text-neutral-900 dark:text-neutral-50">
+          <div
+            className="flex items-center justify-between w-full mb-10 lg:mb-0"
+            data-aos="fade-down"
+          >
+            <Link
+              href="/"
+              className="flex items-center gap-2 group font-black text-xl tracking-tight text-neutral-900 dark:text-neutral-50"
+            >
               <span className="w-8 h-8 rounded-lg bg-emerald-700 dark:bg-emerald-500 flex items-center justify-center text-white dark:text-black font-black text-base group-hover:rotate-6 transition-transform">
                 🌿
               </span>
-              fresh<span className="text-emerald-700 dark:text-emerald-400">Root</span>
+              fresh
+              <span className="text-emerald-700 dark:text-emerald-400">
+                Root
+              </span>
             </Link>
           </div>
 
@@ -154,16 +171,23 @@ export default function Register(): React.JSX.Element {
                 Create Your Account
               </h2>
               <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-2">
-                Gain instant access to unadulterated food elements and transparent trace archives.
+                Gain instant access to unadulterated food elements and
+                transparent trace archives.
               </p>
             </div>
 
             {/* Registration Form Submission Box */}
-            <form onSubmit={handleRegister} className="mt-8 flex flex-col gap-4 w-full" data-aos="fade-up" data-aos-delay="200">
-              
+            <form
+              onSubmit={handleRegister}
+              className="mt-8 flex flex-col gap-4 w-full"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {/* Full Name Input Field */}
               <div className="flex flex-col gap-1.5 relative">
-                <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">Full Name</label>
+                <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                  Full Name
+                </label>
                 <div className="relative flex items-center">
                   <User className="absolute left-4 text-neutral-400 dark:text-neutral-500 w-5 h-5" />
                   <input
@@ -180,7 +204,9 @@ export default function Register(): React.JSX.Element {
 
               {/* Email Input Field */}
               <div className="flex flex-col gap-1.5 relative">
-                <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">Email Address</label>
+                <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                  Email Address
+                </label>
                 <div className="relative flex items-center">
                   <Mail className="absolute left-4 text-neutral-400 dark:text-neutral-500 w-5 h-5" />
                   <input
@@ -197,7 +223,9 @@ export default function Register(): React.JSX.Element {
 
               {/* Password Input Field */}
               <div className="flex flex-col gap-1.5 relative">
-                <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">Password</label>
+                <label className="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                  Password
+                </label>
                 <div className="relative flex items-center">
                   <Lock className="absolute left-4 text-neutral-400 dark:text-neutral-500 w-5 h-5" />
                   <input
@@ -231,11 +259,15 @@ export default function Register(): React.JSX.Element {
                     className="peer sr-only"
                   />
                   <div className="w-5 h-5 rounded-md border-2 border-neutral-300 dark:border-neutral-700 bg-white/40 dark:bg-black/20 peer-checked:bg-emerald-700 dark:peer-checked:bg-emerald-500 peer-checked:border-transparent flex items-center justify-center transition-all peer-disabled:opacity-40">
-                    <CheckSquare size={14} className="text-white dark:text-[#0e100e] opacity-0 peer-checked:opacity-100 transition-opacity" />
+                    <CheckSquare
+                      size={14}
+                      className="text-white dark:text-[#0e100e] opacity-0 peer-checked:opacity-100 transition-opacity"
+                    />
                   </div>
                 </label>
                 <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 leading-tight">
-                  I agree to the strict food integrity guidelines, consumer safety protocols, and privacy clauses.
+                  I agree to the strict food integrity guidelines, consumer
+                  safety protocols, and privacy clauses.
                 </span>
               </div>
 
@@ -253,7 +285,10 @@ export default function Register(): React.JSX.Element {
                 ) : (
                   <>
                     Create Free Account
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
                   </>
                 )}
               </button>
@@ -261,7 +296,9 @@ export default function Register(): React.JSX.Element {
               {/* Divider Line */}
               <div className="flex items-center gap-3 my-2 text-neutral-400 dark:text-neutral-600">
                 <div className="h-[1px] w-full bg-neutral-300/60 dark:bg-neutral-800" />
-                <span className="text-[10px] font-bold tracking-widest uppercase shrink-0">Or Join With</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase shrink-0">
+                  Or Join With
+                </span>
                 <div className="h-[1px] w-full bg-neutral-300/60 dark:bg-neutral-800" />
               </div>
 
@@ -296,22 +333,33 @@ export default function Register(): React.JSX.Element {
                 </svg>
                 Continue with Google
               </button>
-
             </form>
 
             {/* Alternative Login Path Anchor */}
-            <p className="text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 mt-6" data-aos="fade-up" data-aos-delay="300">
+            <p
+              className="text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 mt-6"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               Already have an verified profile?{" "}
-              <Link href="/auth/login" className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
+              <Link
+                href="/auth/login"
+                className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline"
+              >
                 Sign in instead
               </Link>
             </p>
           </div>
 
           {/* Privacy Integrity Badge Footer row */}
-          <div className="text-center lg:text-left pt-6 lg:pt-0" data-aos="fade-up" data-aos-delay="400">
+          <div
+            className="text-center lg:text-left pt-6 lg:pt-0"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
             <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 tracking-wide select-none">
-              Your data is completely siloed and encrypted via biomorphic protocols.
+              Your data is completely siloed and encrypted via biomorphic
+              protocols.
             </span>
           </div>
         </div>
@@ -329,12 +377,18 @@ export default function Register(): React.JSX.Element {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
 
           {/* Glassmorphic Floating Testimonial Panel */}
-          <div className="absolute bottom-12 left-12 right-12 p-8 rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-xl shadow-2xl max-w-xl text-left" data-aos="fade-left" data-aos-delay="400">
+          <div
+            className="absolute bottom-12 left-12 right-12 p-8 rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-xl shadow-2xl max-w-xl text-left"
+            data-aos="fade-left"
+            data-aos-delay="400"
+          >
             <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-xl mb-4 inline-block">
               Absolute Food Traceability
             </span>
             <blockquote className="text-xl font-medium tracking-tight text-white leading-relaxed">
-              “Consuming foods in their raw, unaltered physical states optimizes cell lifecycle repair speeds and significantly diminishes biological inflammation spikes.”
+              “Consuming foods in their raw, unaltered physical states optimizes
+              cell lifecycle repair speeds and significantly diminishes
+              biological inflammation spikes.”
             </blockquote>
             <div className="mt-4 flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -344,7 +398,6 @@ export default function Register(): React.JSX.Element {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

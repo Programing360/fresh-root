@@ -7,14 +7,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import SkeletonCard from "@/components/SkeletonCard";
 import { Product } from "@/types/product";
+import { allProducts } from "@/lib/api/products";
 
 interface ShopPageProps {
-  products: Product[];
+  initialProducts: Product[]; 
 }
 
-export default function ShopPage({ products }: ShopPageProps) {
+export default function ShopPage({ initialProducts }: ShopPageProps) {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -22,52 +24,50 @@ export default function ShopPage({ products }: ShopPageProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
 
+  // console.log(searchQuery);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    initialProducts.forEach((p) => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, [initialProducts]);
+
+  const allCategories = useMemo(() => {
+    return Array.from(new Set(initialProducts.map((p) => p.category)));
+  }, [initialProducts]);
+
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchFilteredProducts = async () => {
+      setIsLoading(true);
+      try {
+        
+        const response = await allProducts({
+          category: selectedCategory || undefined,
+          sort: sortBy,
+          search: searchQuery.trim() || undefined,
+        });
+      
+        if (response && Array.isArray(response)) {
+          setProducts(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch filtered products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
- const categoryCounts = useMemo(() => {
-  const counts: Record<string, number> = {};
-  products.forEach((p) => {
-    counts[p.category] = (counts[p.category] || 0) + 1;
-  });
-  return counts;
-}, [products]);
+    const delayDebounceFn = setTimeout(() => {
+      fetchFilteredProducts();
+    }, 500);
 
-const filteredProducts = useMemo(() => {
-  let result = [...products];
-
-  if (selectedCategory) {
-    result = result.filter((p) => p.category === selectedCategory);
-  }
-
-  if (searchQuery.trim() !== "") {
-    result = result.filter((p) =>
-      p.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
-
-  if (sortBy === "low-to-high") {
-    result.sort((a, b) => (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price));
-  } else if (sortBy === "high-to-low") {
-    result.sort((a, b) => (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price));
-  } else if (sortBy === "rating") {
-    result.sort((a, b) => b.rating - a.rating);
-  } else {
-    result.sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
-  }
-
-  return result;
-}, [products, searchQuery, selectedCategory, sortBy]);
-
-const allCategories = useMemo(() => {
-  return Array.from(new Set(products.map((p) => p.category)));
-}, [products]);
-
+    return () => clearTimeout(delayDebounceFn);
+  }, [selectedCategory, sortBy, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#fcfcfb] text-neutral-800 dark:bg-[#0c0e0c] dark:text-neutral-100">
+    <div className="min-h-screen bg-[#fcfcfb] text-neutral-800 dark:bg-[#111c1e] dark:text-neutral-100">
       
       {/* Premium Hero Shop Banner */}
       <div className="relative h-[340px] w-full overflow-hidden bg-emerald-950">
@@ -93,11 +93,11 @@ const allCategories = useMemo(() => {
         
         <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-neutral-200/60 dark:border-neutral-800/60 pb-6">
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Showing <span className="font-semibold text-neutral-800 dark:text-neutral-200">{filteredProducts.length}</span> of {products.length} results
+            Showing <span className="font-semibold text-neutral-800 dark:text-neutral-200">{products.length}</span> results
             {selectedCategory && (
               <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
                 {selectedCategory}
-                <button onClick={() => setSelectedCategory(null)} className="font-bold hover:text-emerald-900">× </button>
+                <button onClick={() => setSelectedCategory(null)} className="font-bold hover:text-emerald-900">×</button>
               </span>
             )}
           </p>
@@ -189,7 +189,7 @@ const allCategories = useMemo(() => {
                   <SkeletonCard key={index} viewMode={viewMode} />
                 ))}
               </div>
-            ) : filteredProducts.length === 0 ? (
+            ) : products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 border border-dashed border-neutral-200 rounded-2xl dark:border-neutral-800">
                 <p className="text-neutral-400 font-medium">No products found matching your parameters.</p>
                 <button 
@@ -204,7 +204,7 @@ const allCategories = useMemo(() => {
                 ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
                 : "flex flex-col gap-4"
               }>
-                {filteredProducts.map((product) => (
+                {products.map((product) => (
                   <ProductCard
                     key={product._id}
                     product={product}
