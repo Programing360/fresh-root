@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌿 Fresh Root — Organic Food E-Commerce Platform
 
-## Getting Started
+> **Short Description:**  
+> Fresh Root is a modern, full-stack e-commerce web application designed for buying authentic organic food products. Built with Next.js, TypeScript, Express, and MongoDB, it features real-time inventory management, dynamic product filtering, seamless cart flows, and an optimized, responsive user interface.
 
-First, run the development server:
+![Fresh Root Banner](https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Fresh Root** is a modern, responsive, and full-stack **E-Commerce Platform** tailored for purchasing authentic organic food products (such as pure honey, natural jaggery, ghee, and fresh items). Built with high performance and accessibility in mind, it provides a seamless shopping experience with dynamic filtering, real-time inventory management, and an interactive UI.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Live Demo & Repository
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* 🌐 **Live Website:** [Fresh Root Live Demo](https://fresh-root.vercel.app)
+* 📁 **GitHub Repository:** [Fresh Root Source Code](https://github.com/your-username/fresh-root)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Key Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* **📦 Dynamic Product Filtering & Search:** Search products by keyword, category, or price range with server-side query optimizations.
+* **⚡ Interactive Product Cards:** Grid & List view options, quick product preview, wishlist toggling, and comparison actions.
+* **🛡️ Smart Inventory Management:** Dynamic stock validation that automatically disables cart actions (`OUT OF STOCK`) when items are unavailable.
+* **⚡ Optimized Image Delivery:** Resilient image loading pipeline with automatic fallbacks for missing data.
+* **🎨 Modern UI/UX:** Built with Tailwind CSS, dark mode support, smooth micro-interactions powered by Framer Motion, and customized loading indicators.
+* **📱 Fully Responsive:** Fully optimized for mobile, tablet, and desktop viewports.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🛠️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **Frontend**
+* **Framework:** [Next.js](https://nextjs.org/) (App Router, React 18, TypeScript)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **Animations:** [Framer Motion](https://framer.com/motion)
+* **Icons:** [Lucide React](https://lucide.dev/)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### **Backend**
+* **Server Runtime:** [Node.js](https://nodejs.org/) & [Express.js](https://expressjs.com/)
+* **Database:** [MongoDB](https://www.mongodb.com/) (Native MongoDB Driver)
+* **Type Safety:** TypeScript
+
+---
+
+💥 Technical Challenges & Solutions
+1. Invalid HTML Nesting & Event Bubbling Error
+Challenge: Nesting actionable <button> tags inside Next.js <Link> elements inside clickable parent containers caused invalid DOM structures and triggered multiple conflicting event handlers.
+
+Solution: Separated navigation links from action buttons, styled <Link> elements directly using Tailwind CSS, and applied explicit e.stopPropagation() with type="button" attributes on child elements.
+
+2. Handling Out-of-Stock Products
+Challenge: Users could attempt to add unavailable items (availability === false) to their cart, leading to invalid orders.
+
+Solution: Built conditional button state logic that dynamically disables interaction, updates cursor styling (cursor-not-allowed), and displays an "OUT OF STOCK" status badge.
+
+3. Next.js Image Engine Fallbacks
+Challenge: Missing database image fields (null or undefined) caused Next.js's <Image /> optimization component to crash the page.
+
+Solution: Configured an inline fallback image pipeline (product?.image || fallbackUrl) ensuring smooth UI rendering regardless of missing backend assets.
