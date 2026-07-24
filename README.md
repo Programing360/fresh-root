@@ -11,8 +11,8 @@
 
 ## 🚀 Live Demo & Repository
 
-* 🌐 **Live Website:** [Fresh Root Live Demo](https://fresh-root.vercel.app)
-* 📁 **GitHub Repository:** [Fresh Root Source Code](https://github.com/your-username/fresh-root)
+* 🌐 **Live Website:** [Fresh Root Live Demo](https://fresh-root-gilt.vercel.app)
+* 📁 **GitHub Repository:** [Fresh Root Source Code](https://github.com/Programing360/fresh-root)
 
 ---
 
